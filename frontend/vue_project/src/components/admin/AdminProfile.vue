@@ -4,14 +4,7 @@
     <div class="row" style="height: 50rem"> 
         <div class="column" style="background: grey" >
             <MenuAdmin/>  
-         <!--   
-            <nav class="nav flex-column">
-                <h3> Welcome admin </h3>
-            <a class="nav-link active" href="#">Active</a>
-            <a class="nav-link" href="#">Link</a>
-            <a class="nav-link" href="#">Link</a>
-            <a class="nav-link disabled" href="#">Disabled</a>
-            </nav> -->
+     
         </div>
     <div class="column" style="width: 83%">
         <div class="picture" >
@@ -47,7 +40,7 @@ margin-right: 2.5rem;
 
 }
 .picture{
-   background:url("../assets/background2.jpg");
+   background:url("../../assets/background2.jpg");
    opacity: 0.9;
     min-height : 100%;
   min-width : 100%;

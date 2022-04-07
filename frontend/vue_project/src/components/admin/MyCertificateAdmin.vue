@@ -41,7 +41,7 @@ margin-right: 2.5rem;
 
 }
 .picture{
-   background:url("../assets/background2.jpg");
+   background:url("../../assets/background2.jpg");
    opacity: 0.9;
     min-height : 100%;
   min-width : 100%;

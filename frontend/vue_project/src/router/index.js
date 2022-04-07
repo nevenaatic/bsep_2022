@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import HelloWorld from "../components/HelloWorld";
-import AdminProfile from "../components/AdminProfile";
-import AllCertificates from "../components/AllCertificates";
-import RejectedCertificates from "../components/RejectedCertificates";
-import MyCertificateAdmin from "../components/MyCertificateAdmin";
+import AdminProfile from "../components/admin/AdminProfile";
+import AllCertificates from "../components/admin/AllCertificates";
+import RejectedCertificates from "../components/admin/RejectedCertificates";
+import MyCertificateAdmin from "../components/admin/MyCertificateAdmin";
 const routes =[
     {
         path: "/",
