@@ -25,7 +25,7 @@
                
                 />
        </div>
-      <button type="button" class="btn btn-primary">Sign in</button>
+      <button type="button" class="btn btn-primary" v-on:click="signIn()"> <router-link to="/admin"> Sign in</router-link ></button>
         </div>
      </form>
     </div> 
@@ -36,7 +36,12 @@
 <script>
 export default {
   name: 'HelloWorld',
- 
+ methods: {
+
+    singIn: function(){
+     this.$router.push({name: 'AdminProfile'})
+   }
+ }
 }
 </script>
 
