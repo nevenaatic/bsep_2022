@@ -1,46 +1,18 @@
 package com.example.demo.model;
 
-//import org.bouncycastle.asn1.x500.X500Name;
-
 import org.bouncycastle.asn1.x500.X500Name;
-
-import javax.persistence.*;
 import java.security.PrivateKey;
 
-@Entity
 public class IssuerData {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private X500Name x500name;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getProba() {
-        return proba;
-    }
-
-    public void setProba(String proba) {
-        this.proba = proba;
-    }
-
-    @Column
-    private String proba;
-
-    /*private X500Name x500name;
-
-    private PrivateKey privateKey;*/
+    private PrivateKey privateKey;
 
     public IssuerData() {
     }
 
-  /* public IssuerData(PrivateKey privateKey, X500Name x500name) {
+    public IssuerData(PrivateKey privateKey, X500Name x500name) {
         this.privateKey = privateKey;
         this.x500name = x500name;
     }
@@ -59,6 +31,6 @@ public class IssuerData {
 
     public void setPrivateKey(PrivateKey privateKey) {
         this.privateKey = privateKey;
-    }*/
+    }
 
 }
