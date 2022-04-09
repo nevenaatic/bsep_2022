@@ -18,9 +18,11 @@ import com.example.demo.model.SubjectData;
 
 
 public class CertificateGenerator {
+	
+	public CertificateGenerator() {}
 
 	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData) {
-		/*
+		
 		try {
 			//Posto klasa za generisanje sertifiakta ne moze da primi direktno privatni kljuc pravi se builder za objekat
 			//Ovaj objekat sadrzi privatni kljuc izdavaoca sertifikata i koristiti se za potpisivanje sertifikata
@@ -59,7 +61,7 @@ public class CertificateGenerator {
 			e.printStackTrace();
 		} catch (CertificateException e) {
 			e.printStackTrace();
-		}*/
+		}
 		return null;
 	}
 }

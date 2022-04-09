@@ -25,6 +25,9 @@ import com.example.demo.model.SubjectData;
 
 public class CertificateExample {
 	
+	public static KeyStoreWriter ksw = new KeyStoreWriter();
+	public static KeyStoreReader ksr = new KeyStoreReader();
+	
 	public CertificateExample() {
 		Security.addProvider(new BouncyCastleProvider());
 	}
@@ -52,7 +55,11 @@ public class CertificateExample {
 			//Moguce je proveriti da li je digitalan potpis sertifikata ispravan, upotrebom javnog kljuca izdavaoca
 			cert.verify(keyPairIssuer.getPublic());
 			System.out.println("\nValidacija uspesna :)");
-			
+			String pass = "rootkeystore";
+			//ksw.loadKeyStore("RootKeyStore.jks", pass.toCharArray());
+			//ksw.write("qbcdefgh",keyPairIssuer.getPrivate(), pass.toCharArray(), cert);
+			//ksw.saveKeyStore("RootKeyStore.jks", pass.toCharArray());
+			System.out.println(ksr.readCertificate("RootKeyStore.jks", pass, "qbcdefgh"));
 			//Ovde se desava exception, jer se validacija vrsi putem drugog kljuca
 			KeyPair anotherPair = generateKeyPair();
 			cert.verify(anotherPair.getPublic());

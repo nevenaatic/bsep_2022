@@ -37,7 +37,6 @@ public class KeyStoreWriter {
 			} else {
 				//Ako je cilj kreirati novi KeyStore poziva se i dalje load, pri cemu je prvi parametar null
 				keyStore.load(null, password);
-				saveKeyStore("neki.jks", password);
 			}
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
