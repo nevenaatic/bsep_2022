@@ -61,8 +61,8 @@ public class CertificateExample {
 			//ksw.saveKeyStore("RootKeyStore.jks", pass.toCharArray());
 			System.out.println(ksr.readCertificate("RootKeyStore.jks", pass, "qbcdefgh"));
 			//Ovde se desava exception, jer se validacija vrsi putem drugog kljuca
-			KeyPair anotherPair = generateKeyPair();
-			cert.verify(anotherPair.getPublic());
+			//KeyPair anotherPair = generateKeyPair();
+			//cert.verify(anotherPair.getPublic());
 		} catch(CertificateException e) {
 			e.printStackTrace();
 		} catch (InvalidKeyException e) {
