@@ -5,6 +5,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -43,7 +44,7 @@ public class CertificateGenerator {
 					subjectData.getPublicKey());
 			//Generise se sertifikat
 			X509CertificateHolder certHolder = certGen.build(contentSigner);
-
+			//certGen.addExtension(Extension.basicConstraints, true, )
 			//Builder generise sertifikat kao objekat klase X509CertificateHolder
 			//Nakon toga je potrebno certHolder konvertovati u sertifikat, za sta se koristi certConverter
 			JcaX509CertificateConverter certConverter = new JcaX509CertificateConverter();

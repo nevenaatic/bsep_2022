@@ -29,8 +29,10 @@
 import MenuAdmin from './MenuAdmin.vue'
 export default {
     components: {MenuAdmin},
-    name: "AdminProfile"
+    name: "AdminProfile",
+
 }
+
 </script>
 
 <style scoped>

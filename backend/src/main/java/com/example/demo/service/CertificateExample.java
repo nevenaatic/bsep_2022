@@ -42,7 +42,6 @@ public class CertificateExample {
 			//Generise se sertifikat za subjekta, potpisan od strane issuer-a
 			CertificateGenerator cg = new CertificateGenerator();
 			X509Certificate cert = cg.generateCertificate(subjectData, issuerData);
-			
 			System.out.println("\n===== Podaci o izdavacu sertifikata =====");
 			System.out.println(cert.getIssuerX500Principal().getName());
 			System.out.println("\n===== Podaci o vlasniku sertifikata =====");
@@ -51,7 +50,6 @@ public class CertificateExample {
 			System.out.println("-------------------------------------------------------");
 			System.out.println(cert);
 			System.out.println("-------------------------------------------------------");
-			
 			//Moguce je proveriti da li je digitalan potpis sertifikata ispravan, upotrebom javnog kljuca izdavaoca
 			cert.verify(keyPairIssuer.getPublic());
 			System.out.println("\nValidacija uspesna :)");
