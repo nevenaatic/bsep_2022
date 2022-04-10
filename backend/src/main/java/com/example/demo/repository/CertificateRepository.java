@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import java.security.cert.Certificate;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,7 @@ public interface CertificateRepository extends JpaRepository<CertificateData, In
 	
 	@Query("SELECT cd FROM CertificateData cd WHERE cd.serialCode=?1")
 	public CertificateData getCertificateByCode(String serialCode);
+
+	public CertificateData findBySubjectKeyId(String issuerKeyId);
+
 }
