@@ -6,5 +6,7 @@ import com.example.demo.model.AppUser;
 
 @Repository
 public interface AppUserRepository extends JpaRepository<AppUser, Integer>{
+
+	AppUser findByEmail(String email);
 }
 

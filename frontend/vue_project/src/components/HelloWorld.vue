@@ -7,12 +7,12 @@
      <form>
        <div class="form-group">
          <div> 
-       <label for="name">Username</label>
+       <label for="name">Email</label>
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Enter username"
-               
+                  placeholder="Enter email"
+                  v-model="this.email"
                 />
          </div>
 
@@ -22,10 +22,10 @@
                   type="password"
                   class="form-control"
                   placeholder="Enter password"
-               
+                  v-model="this.password"
                 />
        </div>
-      <button type="button" class="btn btn-primary" v-on:click="signIn()"> <router-link to="/admin"> Sign in</router-link ></button>
+      <button type="submit" class="btn btn-primary" @click="signIn()"> </button>
         </div>
      </form>
     </div> 
@@ -34,13 +34,44 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
-  name: 'HelloWorld',
+ name: 'HelloWorld',
+ 
+ data(){
+   return {
+      email: "",
+      password: ""
+   }
+ },
+
  methods: {
 
-    singIn: function(){
-     this.$router.push({name: 'AdminProfile'})
-   }
+  async singIn(){
+
+    const headers ={
+      "Content-type": "application/json",
+    }; 
+    console.log("HEEEEEEJ");
+    axios.post("http://localhost:8081/appUser/login",{ email: this.email, password: this.password }, {headers})
+          .then( response => {
+          localStorage.setItem("userEmail", response.data.email);
+          localStorage.setItem("userType", response.data.userType);
+          console.log("HEJ");
+          if (localStorage.getItem("userType") == "admin"){
+            this.$router.go("http://localhost:8082/admin")
+           // this.$router.go(0);
+          } else if (localStorage.getItem("userType") == "certification_authority") {
+            this.$router.push({name: 'MyProfileCA'})
+           /// this.$router.go(0);
+          } else if (localStorage.getItem("userType") == "end_user") {
+            this.$router.push({name: 'MyProfileCA'})
+          //  this.$router.go(0);
+          }
+
+          })
+  }
  }
 }
 </script>

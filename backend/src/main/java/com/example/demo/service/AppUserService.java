@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.model.AppUser;
 import com.example.demo.repository.AppUserRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,4 +13,8 @@ public class AppUserService {
         this.appUserRepository = appUserRepository;
 
     }
+
+	public AppUser findByEmail(String email) {
+		return appUserRepository.findByEmail(email);
+	}
 }

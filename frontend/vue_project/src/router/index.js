@@ -5,6 +5,8 @@ import AdminProfile from "../components/admin/AdminProfile";
 import AllCertificates from "../components/admin/AllCertificates";
 import RejectedCertificates from "../components/admin/RejectedCertificates";
 import MyCertificateAdmin from "../components/admin/MyCertificateAdmin";
+import MyProfileCA from "../components/ca/MyProfileCA"
+
 const routes =[
     {
         path: "/",
@@ -32,6 +34,11 @@ const routes =[
         name: "MyCertificateAdmin",
         component:   MyCertificateAdmin
 
+    },
+    {
+        path: "/ca",
+        name: "MyProfileCA",
+        component: MyProfileCA
     }
 ];
 const router = createRouter({
