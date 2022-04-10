@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,17 +30,17 @@ public class CertificateData {
 	@Column
 	public String issuerKeyId;
 	@Column
-	public LocalDateTime validFrom;
+	public Date validFrom;
 	@Column
-	public LocalDateTime validUntil;
+	public Date validUntil;
 	@Column
 	public boolean revoked;
 	@Enumerated(value = EnumType.STRING)
 	@Column
-	public CertificateType type;
+	public CertificateType certificateType;
 
 	public CertificateData(long id, String serialCode, long subjectUserId, long issuerUSerId, String subjectKeyId,
-			String issuerKeyId, LocalDateTime validFrom, LocalDateTime validUntil, boolean revoked,
+			String issuerKeyId, Date validFrom, Date validUntil, boolean revoked,
 			CertificateType type) {
 		super();
 		this.id = id;
@@ -52,10 +52,25 @@ public class CertificateData {
 		this.validFrom = validFrom;
 		this.validUntil = validUntil;
 		this.revoked = revoked;
-		this.type = type;
+		this.certificateType = type;
 	}
+	
+	
 
-
+	public CertificateData(String serialCode, long subjectUserId, long issuerUserId, String subjectKeyId,
+			String issuerKeyId, Date validFrom, Date validUntil, boolean revoked,
+			CertificateType type) {
+		super();
+		this.serialCode = serialCode;
+		this.subjectUserId = subjectUserId;
+		this.issuerUserId = issuerUserId;
+		this.subjectKeyId = subjectKeyId;
+		this.issuerKeyId = issuerKeyId;
+		this.validFrom = validFrom;
+		this.validUntil = validUntil;
+		this.revoked = revoked;
+		this.certificateType = type;
+	}
 
 	public CertificateData() {
 		super();

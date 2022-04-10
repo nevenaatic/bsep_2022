@@ -19,48 +19,76 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.example.demo.dto.IssuerInfoDTO;
+import com.example.demo.dto.SubjectInfoDTO;
+import com.example.demo.model.CertificateData;
+import com.example.demo.model.CertificateType;
 import com.example.demo.model.IssuerData;
 import com.example.demo.model.SubjectData;
+import com.example.demo.repository.AppUserRepository;
+import com.example.demo.repository.CertificateRepository;
 
 public class CertificateExample {
 	
 	public static KeyStoreWriter ksw = new KeyStoreWriter();
 	public static KeyStoreReader ksr = new KeyStoreReader();
+	@Autowired
+	private CertificateRepository certificateRepository; 
+	@Autowired
+	private AppUserRepository appUserRepository;
 	
 	public CertificateExample() {
 		Security.addProvider(new BouncyCastleProvider());
 	}
 	
-	public void testIt() {
+	public void saveCertificate(IssuerInfoDTO issuer, SubjectInfoDTO subject, String dateFrom, String dateUntil, boolean isCA) {
 		try {
-			SubjectData subjectData = generateSubjectData();
-			
+			SubjectData subjectData = generateSubjectData(subject, dateFrom, dateUntil);
 			KeyPair keyPairIssuer = generateKeyPair();
-			IssuerData issuerData = generateIssuerData(keyPairIssuer.getPrivate());
+			IssuerData issuerData = generateIssuerData(keyPairIssuer.getPrivate(), issuer);
 		    
 			//Generise se sertifikat za subjekta, potpisan od strane issuer-a
 			CertificateGenerator cg = new CertificateGenerator();
 			X509Certificate cert = cg.generateCertificate(subjectData, issuerData);
-			System.out.println("\n===== Podaci o izdavacu sertifikata =====");
-			System.out.println(cert.getIssuerX500Principal().getName());
-			System.out.println("\n===== Podaci o vlasniku sertifikata =====");
-			System.out.println(cert.getSubjectX500Principal().getName());
-			System.out.println("\n===== Sertifikat =====");
-			System.out.println("-------------------------------------------------------");
-			System.out.println(cert);
-			System.out.println("-------------------------------------------------------");
+			String subjectKeyId = getKeyID(40);
+			long issuerId = appUserRepository.getUserByEmail(issuer.email).id;
+			CertificateData certData = new CertificateData(subjectData.getSerialNumber(), 
+					issuerId, 
+					appUserRepository.getUserByEmail(subject.email).id, 
+					subjectKeyId, 
+					getCACertificateById(issuerId), 
+					subjectData.getStartDate(),
+					subjectData.getEndDate(),
+					false, 
+					CertificateType.end_entity);
+			if (isCA)
+				certData.certificateType = CertificateType.CA;
 			//Moguce je proveriti da li je digitalan potpis sertifikata ispravan, upotrebom javnog kljuca izdavaoca
 			cert.verify(keyPairIssuer.getPublic());
 			System.out.println("\nValidacija uspesna :)");
+			
+			certificateRepository.save(certData);
+			
 			String pass = "rootkeystore";
-			//ksw.loadKeyStore("RootKeyStore.jks", pass.toCharArray());
-			//ksw.write("qbcdefgh",keyPairIssuer.getPrivate(), pass.toCharArray(), cert);
-			//ksw.saveKeyStore("RootKeyStore.jks", pass.toCharArray());
-			System.out.println(ksr.readCertificate("RootKeyStore.jks", pass, "qbcdefgh"));
+			String file = "RootKeyStore.jks";
+			if (!subject.email.equalsIgnoreCase(issuer.email)) {
+				if (isCA) {
+					pass = "cakeystore";
+					file = "CAKeyStore.jks";
+				}
+				else {
+					pass = "endentitykeystore";
+					file = "EndEntityKeyStore.jks";
+				}
+			}
+			ksw.loadKeyStore(file, pass.toCharArray());
+			ksw.write(subjectKeyId, keyPairIssuer.getPrivate(), pass.toCharArray(), cert);
+			ksw.saveKeyStore(file, pass.toCharArray());
+			
+			//System.out.println(ksr.readCertificate("RootKeyStore.jks", pass, "qbcdefgh"));
 			//Ovde se desava exception, jer se validacija vrsi putem drugog kljuca
-			KeyPair anotherPair = generateKeyPair();
-			cert.verify(anotherPair.getPublic());
 		} catch(CertificateException e) {
 			e.printStackTrace();
 		} catch (InvalidKeyException e) {
@@ -75,17 +103,25 @@ public class CertificateExample {
 		}
 	}
 	
-	private IssuerData generateIssuerData(PrivateKey issuerKey) {
+	public String getCACertificateById(long id) {
+		for (CertificateData cd : certificateRepository.findAll()) {
+			if (cd.subjectUserId == id && cd.certificateType == CertificateType.CA)
+				return cd.subjectKeyId;
+		}
+		return null;
+	}
+	
+	private IssuerData generateIssuerData(PrivateKey issuerKey, IssuerInfoDTO issuer) {
 		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
-	    builder.addRDN(BCStyle.CN, "Nikola Luburic");
-	    builder.addRDN(BCStyle.SURNAME, "Luburic");
-	    builder.addRDN(BCStyle.GIVENNAME, "Nikola");
+	    builder.addRDN(BCStyle.CN, issuer.name + " " + issuer.surname);
+	    builder.addRDN(BCStyle.SURNAME, issuer.surname);
+	    builder.addRDN(BCStyle.GIVENNAME, issuer.name);
 	    builder.addRDN(BCStyle.O, "UNS-FTN");
 	    builder.addRDN(BCStyle.OU, "Katedra za informatiku");
 	    builder.addRDN(BCStyle.C, "RS");
-	    builder.addRDN(BCStyle.E, "nikola.luburic@uns.ac.rs");
+	    builder.addRDN(BCStyle.E, issuer.email);
 	    //UID (USER ID) je ID korisnika
-	    builder.addRDN(BCStyle.UID, "654321");
+	    builder.addRDN(BCStyle.UID, issuer.userId);
 
 		//Kreiraju se podaci za issuer-a, sto u ovom slucaju ukljucuje:
 	    // - privatni kljuc koji ce se koristiti da potpise sertifikat koji se izdaje
@@ -93,28 +129,28 @@ public class CertificateExample {
 		return new IssuerData(issuerKey, builder.build());
 	}
 
-	private SubjectData generateSubjectData() {
+	private SubjectData generateSubjectData(SubjectInfoDTO subject, String dateFrom, String dateUntil) {
 		try {
 			KeyPair keyPairSubject = generateKeyPair();
 			
 			//Datumi od kad do kad vazi sertifikat
 			SimpleDateFormat iso8601Formater = new SimpleDateFormat("yyyy-MM-dd");
-			Date startDate = iso8601Formater.parse("2017-12-31");
-			Date endDate = iso8601Formater.parse("2022-12-31");
+			Date startDate = iso8601Formater.parse(dateFrom);
+			Date endDate = iso8601Formater.parse(dateUntil);
 			
 			//Serijski broj sertifikata
-			String sn="1";
+			String sn = getSerialCode(8);
 			//klasa X500NameBuilder pravi X500Name objekat koji predstavlja podatke o vlasniku
 			X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
-		    builder.addRDN(BCStyle.CN, "Goran Sladic");
-		    builder.addRDN(BCStyle.SURNAME, "Sladic");
-		    builder.addRDN(BCStyle.GIVENNAME, "Goran");
+		    builder.addRDN(BCStyle.CN, subject.name + " " + subject.surname);
+		    builder.addRDN(BCStyle.SURNAME, subject.surname);
+		    builder.addRDN(BCStyle.GIVENNAME, subject.name);
 		    builder.addRDN(BCStyle.O, "UNS-FTN");
 		    builder.addRDN(BCStyle.OU, "Katedra za informatiku");
 		    builder.addRDN(BCStyle.C, "RS");
-		    builder.addRDN(BCStyle.E, "sladicg@uns.ac.rs");
+		    builder.addRDN(BCStyle.E, subject.email);
 		    //UID (USER ID) je ID korisnika
-		    builder.addRDN(BCStyle.UID, "123456");
+		    builder.addRDN(BCStyle.UID, subject.userId);
 		    
 		    //Kreiraju se podaci za sertifikat, sto ukljucuje:
 		    // - javni kljuc koji se vezuje za sertifikat
@@ -142,9 +178,62 @@ public class CertificateExample {
         return null;
 	}
 	
+	static String getSerialCode(int n)
+    {
+  
+        // chose a Character random from this String
+        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                    + "0123456789"
+                                    + "abcdefghijklmnopqrstuvxyz";
+  
+        // create StringBuffer size of AlphaNumericString
+        StringBuilder sb = new StringBuilder(n);
+  
+        for (int i = 0; i < n; i++) {
+  
+            // generate a random number between
+            // 0 to AlphaNumericString variable length
+            int index
+                = (int)(AlphaNumericString.length()
+                        * Math.random());
+  
+            // add Character one by one in end of sb
+            sb.append(AlphaNumericString
+                          .charAt(index));
+        }
+  
+        return sb.toString();
+    }
+	
+	static String getKeyID(int n)
+    {
+  
+        // chose a Character random from this String
+        String AlphaNumericString = "0123456789"
+                                    + "abcdef";
+  
+        // create StringBuffer size of AlphaNumericString
+        StringBuilder sb = new StringBuilder(n);
+  
+        for (int i = 0; i < n; i++) {
+  
+            // generate a random number between
+            // 0 to AlphaNumericString variable length
+            int index
+                = (int)(AlphaNumericString.length()
+                        * Math.random());
+  
+            // add Character one by one in end of sb
+            sb.append(AlphaNumericString
+                          .charAt(index));
+        }
+  
+        return sb.toString();
+    }
+	
 	public static void main(String[] args) {
 		CertificateExample certificateExample = new CertificateExample();
-		certificateExample.testIt();
+		//certificateExample.saveCertificate();
 	}
 }
 

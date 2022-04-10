@@ -1,0 +1,1 @@
+keytool -export -alias qbcdefgh -keystore D:\bsep_2022\backend\RootKeyStore.jks  -rfc -file D:\bsep_2022\backend\CERT2.crt
