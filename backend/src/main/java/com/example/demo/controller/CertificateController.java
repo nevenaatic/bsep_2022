@@ -21,8 +21,12 @@ import com.example.demo.service.CertificateService;
 @RequestMapping(value="certificate")
 public class CertificateController {
 	
-	@Autowired
-	private CertificateService certService;
+	//@Autowired
+	private CertificateService certificateService;
+	
+	public CertificateController(CertificateService certificateService ) {
+		this.certificateService = certificateService;
+	}
 
 	@PostMapping(path = "/createCertificate")
 	public boolean createCertificate()
@@ -45,7 +49,7 @@ public class CertificateController {
 	@GetMapping(path = "/getAllCertificates")
 	public ResponseEntity<List<CertificateData>> getAllCertificates()
 	{
-		return new ResponseEntity<List<CertificateData>>(certService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<List<CertificateData>>(certificateService.findAll(), HttpStatus.OK);
 	}
 	
 	@GetMapping(path = "/getCertificatesById/{userId}")
@@ -57,9 +61,18 @@ public class CertificateController {
 	@GetMapping(path = "/revoke/{certificateSerial}")
 	public ResponseEntity<List<String>> revoke(@PathVariable("certificateSerial") String serial)
 	{
-		certService.revokeCertificate(serial);
+		certificateService.revokeCertificate(serial);
 		List <String> lista = new ArrayList<String>();
 		lista.add("BEJB");
 		return new ResponseEntity<List<String>>(lista, HttpStatus.OK);
 	}
+	@PostMapping(value = "/checkValidity/{serialCode}")
+	public ResponseEntity<Boolean> isCertificateValid(@PathVariable String serialCode) {
+		
+	
+		return new ResponseEntity<> (certificateService.isCertificateValid(serialCode), HttpStatus.ACCEPTED);
+		  
+	}
+	
+	
 }
