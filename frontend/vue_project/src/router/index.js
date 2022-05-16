@@ -5,6 +5,9 @@ import AdminProfile from "../components/admin/AdminProfile";
 import AllCertificates from "../components/admin/AllCertificates";
 import RejectedCertificates from "../components/admin/RejectedCertificates";
 import MyCertificateAdmin from "../components/admin/MyCertificateAdmin";
+import RegisterComponent from "../components/register/Register";
+import EmailVerification from "../components/register/EmailVerification";
+
 const routes =[
     {
         path: "/",
@@ -32,7 +35,20 @@ const routes =[
         name: "MyCertificateAdmin",
         component:   MyCertificateAdmin
 
-    }
+    },
+    {
+        path: "/register",
+        name: "Register",
+        component:   RegisterComponent
+
+    },
+    {
+        path: "/emailVerification",
+        name: "EmailVerification",
+        component:   EmailVerification
+
+    },
+    
 ];
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),

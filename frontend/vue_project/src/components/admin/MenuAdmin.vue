@@ -5,7 +5,7 @@
        
             <nav class="nav flex-column">
                 <h3> Welcome admin </h3>
-            <a class="nav-link active" href="/certificates">All sertificates</a>
+            <a class="nav-link active" href="/certificates">All certificates</a>
             <a class="nav-link" href="/rejected">Rejected</a>
             <a class="nav-link" href="/certificateadmin">My certificate</a>
             <div>  <button type="button" class="btn btn-primary" v-on:click="logOut()"> <router-link to="/"> Log out</router-link ></button></div>

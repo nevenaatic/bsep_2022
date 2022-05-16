@@ -10,5 +10,9 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long>{
 	
 	@Query("SELECT au FROM AppUser au WHERE au.email=?1")
 	public AppUser getUserByEmail(String email);
+	
+	public AppUser findByEmail(String email);
+	
+	public AppUser findByVerificationCode(String verificationCode);
 }
 

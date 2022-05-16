@@ -34,6 +34,10 @@ public class AppUser {
 	@Enumerated(value = EnumType.STRING)
 	@Column
 	public UserType role;
+	@Column
+	public boolean verified;
+	@Column
+	public String verificationCode;
 	
 	public AppUser() {
 		super();
