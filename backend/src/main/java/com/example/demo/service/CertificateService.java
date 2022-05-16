@@ -74,15 +74,15 @@ public class CertificateService {
     	CertificateData issurerCertificateDatabase = null;
     	Boolean ret = null;
     	
-    	if (certificateFromDatabase.type == CertificateType.root) {
+    	if (certificateFromDatabase.certificateType == CertificateType.root) {
     		return this.checkRoot(certificateFromDatabase);
     	}
     	
-    	if (certificateFromDatabase.type == CertificateType.CA) {
+    	if (certificateFromDatabase.certificateType == CertificateType.CA) {
     		ret = this.checkCA(certificateFromDatabase);
     		issurerCertificateDatabase = this.certificateRepository.findBySubjectKeyId(certificateFromDatabase.issuerKeyId);
     		issurerCertificateFromKeyStore = this.keyStoreReader.readCertificate("CAKeyStore.jks", "cakeystore", issurerCertificateDatabase.serialCode);	
-    		if (issurerCertificateDatabase.type != CertificateType.root) {
+    		if (issurerCertificateDatabase.certificateType != CertificateType.root) {
     			ret = checkCA(issurerCertificateDatabase);
     			if (ret) {
     				this.isCertificateValid(issurerCertificateDatabase.serialCode);
@@ -112,7 +112,7 @@ public class CertificateService {
     	Certificate issurerCertificateFromKeyStore = null;
     	CertificateData issurerCertificateDatabase = null;
     	
-    	if (certificateFromDatabase.type == CertificateType.CA) {
+    	if (certificateFromDatabase.certificateType == CertificateType.CA) {
     		certificateFromKeyStore = this.keyStoreReader.readCertificate("CAKeyStore.jks", "cakeystore", certificateFromDatabase.serialCode);
     		issurerCertificateDatabase = this.certificateRepository.findBySubjectKeyId(certificateFromDatabase.issuerKeyId);
     		issurerCertificateFromKeyStore = this.keyStoreReader.readCertificate("CAKeyStore.jks", "cakeystore", issurerCertificateDatabase.serialCode);	
@@ -141,7 +141,7 @@ public class CertificateService {
     	Certificate issurerCertificateFromKeyStore = null;
     	CertificateData issurerCertificateDatabase = null;
     	
-    	if (certificateFromDatabase.type == CertificateType.end_entity) {
+    	if (certificateFromDatabase.certificateType == CertificateType.end_entity) {
     		certificateFromKeyStore = this.keyStoreReader.readCertificate("EndEntityKeyStore.jks", "endentitykeystore", certificateFromDatabase.serialCode);
     		issurerCertificateDatabase = this.certificateRepository.findBySubjectKeyId(certificateFromDatabase.issuerKeyId);
     		issurerCertificateFromKeyStore = this.keyStoreReader.readCertificate("EndEntityKeyStore.jks", "endentitykeystore", issurerCertificateDatabase.serialCode);
