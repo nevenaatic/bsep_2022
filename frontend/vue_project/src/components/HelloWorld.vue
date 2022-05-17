@@ -25,7 +25,7 @@
                   v-model="this.password"
                 />
        </div>
-      <button type="submit" class="btn btn-primary" @click="signIn()"> </button>
+      <button type="submit" class="btn btn-primary" @click="signIn()">Sing in</button>
         </div>
      </form>
     </div> 
@@ -49,28 +49,26 @@ export default {
  methods: {
 
   async singIn(){
-
+    console.log("HEEEEEEJ");
     const headers ={
       "Content-type": "application/json",
     }; 
-    console.log("HEEEEEEJ");
     axios.post("http://localhost:8081/appUser/login",{ email: this.email, password: this.password }, {headers})
-          .then( response => {
-          localStorage.setItem("userEmail", response.data.email);
-          localStorage.setItem("userType", response.data.userType);
-          console.log("HEJ");
-          if (localStorage.getItem("userType") == "admin"){
-            this.$router.go("http://localhost:8082/admin")
-           // this.$router.go(0);
-          } else if (localStorage.getItem("userType") == "certification_authority") {
-            this.$router.push({name: 'MyProfileCA'})
-           /// this.$router.go(0);
-          } else if (localStorage.getItem("userType") == "end_user") {
-            this.$router.push({name: 'MyProfileCA'})
-          //  this.$router.go(0);
-          }
-
-          })
+      .then( response => {
+      localStorage.setItem("userEmail", response.data.email);
+      localStorage.setItem("userType", response.data.userType);
+      console.log("HEJ");
+      if (localStorage.getItem("userType") == "admin"){
+        this.$router.go("http://localhost:8082/admin")
+        // this.$router.go(0);
+      } else if (localStorage.getItem("userType") == "certification_authority") {
+        this.$router.push({name: 'MyProfileCA'})
+        /// this.$router.go(0);
+      } else if (localStorage.getItem("userType") == "end_user") {
+        this.$router.push({name: 'MyProfileCA'})
+      //  this.$router.go(0);
+      }
+      })
   }
  }
 }
