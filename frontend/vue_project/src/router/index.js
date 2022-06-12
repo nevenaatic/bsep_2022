@@ -7,6 +7,7 @@ import RejectedCertificates from "../components/admin/RejectedCertificates";
 import MyCertificateAdmin from "../components/admin/MyCertificateAdmin";
 import RegisterComponent from "../components/register/Register";
 import EmailVerification from "../components/register/EmailVerification";
+import IssueCertificate from "../components/admin/IssueCertificate";
 
 const routes =[
     {
@@ -46,6 +47,12 @@ const routes =[
         path: "/emailVerification",
         name: "EmailVerification",
         component:   EmailVerification
+
+    },
+    {
+        path: "/issueCertificate",
+        name: "IssueCertificate",
+        component:   IssueCertificate
 
     },
     

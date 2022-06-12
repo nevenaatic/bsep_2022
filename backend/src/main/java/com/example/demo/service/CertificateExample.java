@@ -20,6 +20,7 @@ import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.IssuerInfoDTO;
 import com.example.demo.dto.SubjectInfoDTO;
@@ -30,6 +31,7 @@ import com.example.demo.model.SubjectData;
 import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.CertificateRepository;
 
+@Service
 public class CertificateExample {
 	
 	public static KeyStoreWriter ksw = new KeyStoreWriter();
@@ -111,25 +113,23 @@ public class CertificateExample {
 		return null;
 	}
 	
-	private IssuerData generateIssuerData(PrivateKey issuerKey, IssuerInfoDTO issuer) {
+	public IssuerData generateIssuerData(PrivateKey issuerKey, IssuerInfoDTO issuer) {
 		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
 	    builder.addRDN(BCStyle.CN, issuer.name + " " + issuer.surname);
 	    builder.addRDN(BCStyle.SURNAME, issuer.surname);
 	    builder.addRDN(BCStyle.GIVENNAME, issuer.name);
-	    builder.addRDN(BCStyle.O, "UNS-FTN");
-	    builder.addRDN(BCStyle.OU, "Katedra za informatiku");
 	    builder.addRDN(BCStyle.C, "RS");
 	    builder.addRDN(BCStyle.E, issuer.email);
 	    //UID (USER ID) je ID korisnika
 	    builder.addRDN(BCStyle.UID, issuer.userId);
-
+	    
 		//Kreiraju se podaci za issuer-a, sto u ovom slucaju ukljucuje:
 	    // - privatni kljuc koji ce se koristiti da potpise sertifikat koji se izdaje
 	    // - podatke o vlasniku sertifikata koji izdaje nov sertifikat
 		return new IssuerData(issuerKey, builder.build());
 	}
 
-	private SubjectData generateSubjectData(SubjectInfoDTO subject, String dateFrom, String dateUntil) {
+	public SubjectData generateSubjectData(SubjectInfoDTO subject, String dateFrom, String dateUntil) {
 		try {
 			KeyPair keyPairSubject = generateKeyPair();
 			
@@ -145,13 +145,11 @@ public class CertificateExample {
 		    builder.addRDN(BCStyle.CN, subject.name + " " + subject.surname);
 		    builder.addRDN(BCStyle.SURNAME, subject.surname);
 		    builder.addRDN(BCStyle.GIVENNAME, subject.name);
-		    builder.addRDN(BCStyle.O, "UNS-FTN");
-		    builder.addRDN(BCStyle.OU, "Katedra za informatiku");
 		    builder.addRDN(BCStyle.C, "RS");
 		    builder.addRDN(BCStyle.E, subject.email);
 		    //UID (USER ID) je ID korisnika
 		    builder.addRDN(BCStyle.UID, subject.userId);
-		    
+		    builder.addRDN(BCStyle.SERIALNUMBER, sn);
 		    //Kreiraju se podaci za sertifikat, sto ukljucuje:
 		    // - javni kljuc koji se vezuje za sertifikat
 		    // - podatke o vlasniku
@@ -164,7 +162,7 @@ public class CertificateExample {
 		return null;
 	}
 
-	private KeyPair generateKeyPair() {
+	public KeyPair generateKeyPair() {
         try {
 			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA"); 
 			SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
@@ -230,10 +228,5 @@ public class CertificateExample {
   
         return sb.toString();
     }
-	
-	public static void main(String[] args) {
-		CertificateExample certificateExample = new CertificateExample();
-		//certificateExample.saveCertificate();
-	}
 }
 

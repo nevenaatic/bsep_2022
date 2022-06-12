@@ -10,9 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.dto.NewUserDto;
-import com.example.demo.dto.UserTokenState;
 import com.example.demo.model.AppUser;
 import com.example.demo.model.UserType;
 import com.example.demo.model.UserVerifications;

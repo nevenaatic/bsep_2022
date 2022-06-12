@@ -18,7 +18,7 @@ public class DemoApplication {
 		SpringApplication.run(DemoApplication.class, args);
 		
 	}
-	/*
+	
 	@Bean
     public ServletWebServerFactory servletContainer() {
         // Enable SSL Trafic
@@ -48,5 +48,5 @@ public class DemoApplication {
         connector.setRedirectPort(8090);
         return connector;
     }
-*/
+
 }

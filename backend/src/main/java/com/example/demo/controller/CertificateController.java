@@ -3,6 +3,9 @@ package com.example.demo.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.security.cert.Certificate;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -10,12 +13,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.dto.CertificateFrontDto;
 import com.example.demo.model.AppUser;
 import com.example.demo.model.CertificateData;
 import com.example.demo.service.AppUserService;
+import com.example.demo.service.CertificateExample;
 import com.example.demo.service.CertificateService;
 
 @Controller
@@ -26,6 +31,8 @@ public class CertificateController {
 	//@Autowired
 	private CertificateService certificateService;
 	private AppUserService appUserService;
+	@Autowired
+	private CertificateExample certGen;
 	
 	public CertificateController(CertificateService certificateService, AppUserService appUserService) {
 		this.certificateService = certificateService;
@@ -33,9 +40,10 @@ public class CertificateController {
 	}
 
 	@PostMapping(path = "/createCertificate")
-	public boolean createCertificate()
+	public ResponseEntity<Boolean> createCertificate(@RequestBody String ccDTO)
 	{
-		return true;
+		//certGen.saveCertificate(issuer, subject, dateFrom, dateUntil, isCA);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 	
 	@PostMapping(path = "/revokeCertificate/{certificateId}")
@@ -80,9 +88,7 @@ public class CertificateController {
 	@PostMapping(value = "/checkValidity/{serialCode}")
 	public ResponseEntity<Boolean> isCertificateValid(@PathVariable String serialCode) {
 		
-	
 		return new ResponseEntity<> (certificateService.isCertificateValid(serialCode), HttpStatus.ACCEPTED);
-		  
 	}
 	
 	private List <CertificateFrontDto> formatCertificateFrontData() {

@@ -29,7 +29,7 @@ export default {
 		submitForm: function() {
 			console.log(this.code)
 			axios
-				.post('http://localhost:8090/registration/emailVerification', this.code)
+				.post('https://localhost:8090/registration/emailVerification', this.code)
 				.then(response => {
 					this.isAuthenticated = response.data;
 					if(this.isAuthenticated)
@@ -42,6 +42,9 @@ export default {
 						Swal.fire('Any fool can use a computer')
 					}
 				})
+				.error(
+					Swal.fire('Vaš kod je istekao ili nije ispravan. Molimo, pokušajte ponovo')
+				)
 
 		},
 		home: function(){

@@ -1,17 +1,5 @@
 <template>
 <div >
-
-    <div class="row" style="height: 50rem"> 
-      <div class="column" style="background: grey" >
-       <MenuAdmin/>   
-      
-        </div>
-    <div class="column" style="width: 83%">
-        <div class="picture" >
-           
-                
-              <div class="informations"> 
-
 <div class="row row-cols-1 row-cols-md-4 g-4">
   <div v-for:="c in certificates" class="col">
     <div class="card" style="width: 20rem; margin-top: 2%">
@@ -31,31 +19,22 @@
     </ul>
     <div class="card-body">
       <button type="button" v-on:click="check()" class="btn-sm btn-secondary">Download</button>
-      <button type="button" class="btn-sm btn-primary" style="margin-left: 2%">Check Validity</button>
+      <button type="button" class="btn-sm btn-primary" v-on:click="checkValidity(c.serialCode)" style="margin-left: 2%">Check Validity</button>
       <button v-if="!c.revoked" type="button" style="margin-left: 2%" class="btn-sm btn-danger">Revoke</button>
     </div>
 </div>
   </div>
 </div>
-   
-    </div>
-     
-        
-         </div>
-             
-         </div>
-</div> 
-
-
 </div>
 </template>
 
 <script>
 
-import MenuAdmin from './MenuAdmin.vue';
+import Swal from 'sweetalert2'
+import axios from 'axios'
 
 export default {
-  components: { MenuAdmin },
+  components: {},
     name: "AdminProfile",
 
   data() {
@@ -69,13 +48,25 @@ export default {
 
   methods: {
     async fetchCertificates() {
-      const res = await fetch("http://localhost:8090/certificate/getAllCertificates");
+      const res = await fetch("https://localhost:8090/certificate/getAllCertificates");
       const data = await res.json();
       return data;
     },
+
     check() {
       console.log(this.certificates);
-    }
+    },
+
+    checkValidity(serial) {
+    axios
+				.post('https://localhost:8090/certificate/checkValidity/' + serial)
+				.then(response => {
+					if(response)
+						Swal.fire('Provera uspešna','Sertifikat ' + serial  + ' je validan !','success')
+					else
+						Swal.fire('Provera uspešna','Sertifikat ' + serial  + ' nije validan !','error')
+				})
+  }
   },
 
   async created() {

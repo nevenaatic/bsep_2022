@@ -19,7 +19,7 @@
 				<br>
 							
 				<label class="col-sm-4 col-form-label" for="email"><b>Email</b></label>
-				<input class="col-sm-4 col-form-control" type="email" v-model="newUser.email" required>
+				<input pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" class="col-sm-4  col-form-control" type="email" v-model="newUser.email" required>
 				<br>
 
 				<label class="col-sm-4 col-form-label" for="password"><b>Password</b></label>
@@ -70,7 +70,7 @@ export default {
 		submitForm:function(){
 			console.log(this.newUser)
 				axios
-				.post('http://localhost:8090/registration/registerUser', this.newUser)
+				.post('https://localhost:8090/registration/registerUser', this.newUser)
 				.then(response=>{
 					localStorage.setItem('email', this.newUser.email)
 					this.bool = response.data

@@ -1,8 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.UserFrontDto;
 import com.example.demo.model.AppUser;
 import com.example.demo.repository.AppUserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -35,5 +37,13 @@ public class AppUserService {
     
     public AppUser findByVerificationCode(String code) {
     	return appUserRepository.findByVerificationCode(code);
+    }
+    
+    public List<UserFrontDto> getUsersDto() {
+    	List <UserFrontDto> usersRet = new ArrayList<UserFrontDto>();
+    	for (AppUser au : appUserRepository.findAll()) {
+    		usersRet.add(new UserFrontDto(au.id, au.name, au.surname, au.email, au.address, au.city, au.country));
+    	}
+    	return usersRet;
     }
 }
