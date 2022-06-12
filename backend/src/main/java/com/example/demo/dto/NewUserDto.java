@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import javax.persistence.Entity;
 
 public class NewUserDto {
 
@@ -30,6 +31,14 @@ public class NewUserDto {
 	public NewUserDto() {
 		super();
 	}
+
+	@Override
+	public String toString() {
+		return "NewUserDto [name=" + name + ", surname=" + surname + ", email=" + email + ", password=" + password
+				+ ", address=" + address + ", city=" + city + ", country=" + country + ", verified=" + verified
+				+ ", verificationCode=" + verificationCode + "]";
+	}
+	
 	
 	
 }

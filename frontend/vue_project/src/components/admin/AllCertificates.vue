@@ -69,7 +69,7 @@ export default {
 
   methods: {
     async fetchCertificates() {
-      const res = await fetch("http://localhost:8082/certificate/getAllCertificates");
+      const res = await fetch("http://localhost:8090/certificate/getAllCertificates");
       const data = await res.json();
       return data;
     },

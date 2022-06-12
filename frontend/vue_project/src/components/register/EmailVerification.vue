@@ -27,8 +27,9 @@ export default {
 
   methods: {
 		submitForm: function() {
+			console.log(this.code)
 			axios
-				.post('/registration/emailVerification', this.code)
+				.post('http://localhost:8090/registration/emailVerification', this.code)
 				.then(response => {
 					this.isAuthenticated = response.data;
 					if(this.isAuthenticated)
@@ -48,21 +49,7 @@ export default {
 		}
 	},
 	mounted(){
-		this.email = localStorage.getItem('email') 
-		axios
-		.post("/registration/emailVerification", this.$route.query.userCode)
-		.then(response => {
-			this.isAuthenticated = response.data;
-			if(this.isAuthenticated)
-			{
-				Swal.fire('Good job!','You clicked the button!','success')
-				this.$router.push("/")
-			}
-			else
-			{
-				Swal.fire('Any fool can use a computer')
-			}
-		})
+		
 	},
 }
 

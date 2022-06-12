@@ -18,7 +18,7 @@ public class DemoApplication {
 		SpringApplication.run(DemoApplication.class, args);
 		
 	}
-	
+	/*
 	@Bean
     public ServletWebServerFactory servletContainer() {
         // Enable SSL Trafic
@@ -39,12 +39,7 @@ public class DemoApplication {
 
         return tomcat;
     }
-
-    /*
-    We need to redirect from HTTP to HTTPS. Without SSL, this application used
-    port 8081. With SSL it will use port 8090. So, any request for 8081 needs to be
-    redirected to HTTPS on 8090.
-     */
+     
     private Connector httpToHttpsRedirectConnector() {
         Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
         connector.setScheme("http");
@@ -53,5 +48,5 @@ public class DemoApplication {
         connector.setRedirectPort(8090);
         return connector;
     }
-
+*/
 }

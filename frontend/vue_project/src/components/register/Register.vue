@@ -70,14 +70,14 @@ export default {
 		submitForm:function(){
 			console.log(this.newUser)
 				axios
-				.post('/registration/registerUser', this.newUser)
+				.post('http://localhost:8090/registration/registerUser', this.newUser)
 				.then(response=>{
 					localStorage.setItem('email', this.newUser.email)
 					this.bool = response.data
 					if(this.bool === true)
 					{
 						console.log("IT IS TRUE")
-						//this.$router.push('/emailVerification')
+						this.$router.push('/emailVerification')
 					}
 					else
 					{

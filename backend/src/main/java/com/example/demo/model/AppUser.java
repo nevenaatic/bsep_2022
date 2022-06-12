@@ -13,8 +13,8 @@ import javax.persistence.SequenceGenerator;
 public class AppUser {
 
 	@Id
-	@SequenceGenerator(name = "appuserSeqGen", sequenceName = "appuserSeq", initialValue = 1, allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appuserSeqGen")
+	@SequenceGenerator(name = "myUserSeqGen", sequenceName = "myUserSeq", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "myUserSeqGen")
 	@Column(name="id", unique=true, nullable=false)
 	public long id;
 	@Column
