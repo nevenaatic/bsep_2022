@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.security.cert.Certificate;
 
+import org.bouncycastle.cert.CertIOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.dto.CertificateFrontDto;
+import com.example.demo.dto.IssuerInfoDTO;
+import com.example.demo.dto.NewCertificateDto;
+import com.example.demo.dto.SubjectInfoDTO;
 import com.example.demo.model.AppUser;
 import com.example.demo.model.CertificateData;
 import com.example.demo.service.AppUserService;
@@ -40,9 +44,14 @@ public class CertificateController {
 	}
 
 	@PostMapping(path = "/createCertificate")
-	public ResponseEntity<Boolean> createCertificate(@RequestBody String ccDTO)
+	public ResponseEntity<Boolean> createCertificate(@RequestBody NewCertificateDto certificateDTO) throws CertIOException
 	{
-		//certGen.saveCertificate(issuer, subject, dateFrom, dateUntil, isCA);
+		System.out.println(certificateDTO.toString());
+		AppUser issuer = appUserService.findById(certificateDTO.issuerId);
+		IssuerInfoDTO issuerDTO = new IssuerInfoDTO(issuer.name, issuer.surname,"", "", "RS", issuer.email, String.valueOf(issuer.id));
+		AppUser subject = appUserService.findById(certificateDTO.subjectId);
+		SubjectInfoDTO subjectDTO = new SubjectInfoDTO(subject.name, subject.surname,"", "", "RS", subject.email, String.valueOf(subject.id));
+		certGen.saveCertificate(issuerDTO, subjectDTO, certificateDTO.validFrom.toString(), certificateDTO.validUntil.toString(), false);
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 	

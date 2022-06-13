@@ -18,6 +18,7 @@ import java.util.Date;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class CertificateExample {
 		Security.addProvider(new BouncyCastleProvider());
 	}
 	
-	public void saveCertificate(IssuerInfoDTO issuer, SubjectInfoDTO subject, String dateFrom, String dateUntil, boolean isCA) {
+	public void saveCertificate(IssuerInfoDTO issuer, SubjectInfoDTO subject, String dateFrom, String dateUntil, boolean isCA) throws CertIOException {
 		try {
 			SubjectData subjectData = generateSubjectData(subject, dateFrom, dateUntil);
 			KeyPair keyPairIssuer = generateKeyPair();
@@ -57,8 +58,8 @@ public class CertificateExample {
 			String subjectKeyId = getKeyID(40);
 			long issuerId = appUserRepository.getUserByEmail(issuer.email).id;
 			CertificateData certData = new CertificateData(subjectData.getSerialNumber(), 
-					issuerId, 
 					appUserRepository.getUserByEmail(subject.email).id, 
+					issuerId, 
 					subjectKeyId, 
 					getCACertificateById(issuerId), 
 					subjectData.getStartDate(),
@@ -139,7 +140,7 @@ public class CertificateExample {
 			Date endDate = iso8601Formater.parse(dateUntil);
 			
 			//Serijski broj sertifikata
-			String sn = getSerialCode(8);
+			String sn = getSerialCode(32);
 			//klasa X500NameBuilder pravi X500Name objekat koji predstavlja podatke o vlasniku
 			X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
 		    builder.addRDN(BCStyle.CN, subject.name + " " + subject.surname);
@@ -180,9 +181,9 @@ public class CertificateExample {
     {
   
         // chose a Character random from this String
-        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                    + "0123456789"
-                                    + "abcdefghijklmnopqrstuvxyz";
+        String AlphaNumericString = 
+                                    "0123456789"
+                                   ;
   
         // create StringBuffer size of AlphaNumericString
         StringBuilder sb = new StringBuilder(n);

@@ -5,7 +5,11 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -22,7 +26,7 @@ public class CertificateGenerator {
 	
 	public CertificateGenerator() {}
 
-	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData) {
+	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData) throws CertIOException {
 		
 		try {
 			//Posto klasa za generisanje sertifiakta ne moze da primi direktno privatni kljuc pravi se builder za objekat
@@ -42,6 +46,13 @@ public class CertificateGenerator {
 					subjectData.getEndDate(),
 					subjectData.getX500name(),
 					subjectData.getPublicKey());
+			ASN1EncodableVector purposes = new ASN1EncodableVector();
+			  purposes.add(KeyPurposeId.id_kp_serverAuth);
+			  purposes.add(KeyPurposeId.id_kp_clientAuth);
+			  purposes.add(KeyPurposeId.anyExtendedKeyUsage);
+			  
+			  certGen.addExtension(Extension.extendedKeyUsage, false, new DERSequence(purposes));
+
 			//Generise se sertifikat
 			X509CertificateHolder certHolder = certGen.build(contentSigner);
 			//certGen.addExtension(Extension.basicConstraints, true, )

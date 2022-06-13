@@ -1,55 +1,57 @@
 <template>
-<div class="container">    
-		<div class="row">
-		<div class="col-lg-3 col-md-2"></div>
-		<div class="col-lg-6 col-md-8 login-box">
-		<form id="registrationForm" @submit.prevent = "submitForm">
-			<div class="container">
-				<div class="col-lg-12 login-key">
-					<i class="bi bi-file-person" aria-hidden="true"></i>
-				</div>
-				<div class="col-lg-12 login-title">REGISTRACIJA</div><br>
+<div class="container-fluid">    
+	<form id="registrationForm" @submit.prevent = "submitForm">
+		<div class="container-fluid" style="margin-left:14%; margin-top:10%">
+			<div class="col-lg-12 login-key">
+				<i class="bi bi-file-person" aria-hidden="true"></i>
+			</div>
+			<h1  class="text-center">REGISTRATION</h1><br>
+		
+			<label class="col-sm-4 col-form-label" for="name"><b>Name</b></label>
+			<input name="nameInput" pattern="[a-zA-Z]+[a-zA-Z ]+" title="Enter letters only." class="col-sm-4 col-form-control" type="text" v-model="newUser.name" required>
+			<br>
 			
-				<label class="col-sm-4 col-form-label" for="name"><b>Name</b></label>
-				<input name="nameInput" pattern="[a-zA-Z]+[a-zA-Z ]+" title="Enter letters only." class="col-sm-4 col-form-control" type="text" v-model="newUser.name" required>
-				<br>
-				
-				<label class="col-sm-4 col-form-label" for="surname"><b>Surname</b></label>
-				<input pattern="[a-zA-Z]+[a-zA-Z ]+" title="Enter letters only." class="col-sm-4 col-form-control" type="text" v-model="newUser.surname" required>
-				<br>
-							
-				<label class="col-sm-4 col-form-label" for="email"><b>Email</b></label>
-				<input pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" class="col-sm-4  col-form-control" type="email" v-model="newUser.email" required>
-				<br>
+			<label class="col-sm-4 col-form-label" for="surname"><b>Surname</b></label>
+			<input pattern="[a-zA-Z]+[a-zA-Z ]+" title="Enter letters only." class="col-sm-4 col-form-control" type="text" v-model="newUser.surname" required>
+			<br>
+						
+			<label class="col-sm-4 col-form-label" for="email"><b>Email</b></label>
+			<input pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" class="col-sm-4  col-form-control" type="email" v-model="newUser.email" required>
+			<br>
 
-				<label class="col-sm-4 col-form-label" for="password"><b>Password</b></label>
-				<input id="password" class="col-sm-4 col-form-control" type="password" v-model="newUser.password" @change='check_pass()' required>
-				<br>
-				
-				<label class="col-sm-4 col-form-label" for="password-repeat"><b>Repeat password</b></label>
-				<input id="confirmPassword" class="col-sm-4 col-form-control" type="password" @change='check_pass()' required>
-				<br>
+			<label class="col-sm-4 col-form-label" for="password"><b>Password</b></label>
+			<input id="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[!@#$%^(*)~])(?=.*[A-Z]).{8,}" title="Must contain at least one number, one special symbol and one uppercase and lowercase letter, and at least 8 or more characters" class="col-sm-4 col-form-control" type="password" v-model="newUser.password" required>
+			<br>
+			
+			<label class="col-sm-4 col-form-label" for="password-repeat"><b>Repeat password</b></label>
+			<input id="confirmPassword" pattern="(?=.*\d)(?=.*[a-z])(?=.*[!@#$%^(*)~])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" class="col-sm-4 col-form-control" type="password" required>
+			<br>
 
-				<label class="col-sm-4 col-form-label" for="address"><b>Address</b></label>
-				<input class="col-sm-4 col-form-control" type="text" v-model="newUser.address" required>
-				<br>
+			<label class="col-sm-4 col-form-label" for="address"><b>Address</b></label>
+			<input class="col-sm-4 col-form-control" type="text" v-model="newUser.address" required>
+			<br>
 
-				<label class="col-sm-4 col-form-label" for="city"><b>City</b></label>
-				<input pattern="[a-zA-Z]+[a-zA-Z ]+" class="col-sm-4 col-form-control" type="text" v-model="newUser.city" required>
-				<br>
-				
-				<label class="col-sm-4 col-form-label" for="country"><b>Country</b></label>
-				<input pattern="[a-zA-Z]+[a-zA-Z ]+" title="Enter letters only." class="col-sm-4 col-form-control" type="text" v-model="newUser.country" required>
+			<label class="col-sm-4 col-form-label" for="city"><b>City</b></label>
+			<input pattern="[a-zA-Z]+[a-zA-Z ]+" title="Enter letters only." class="col-sm-4 col-form-control" type="text" v-model="newUser.city" required>
+			<br>
+			
+			<label class="col-sm-4 col-form-label" for="country"><b>Country</b></label>
+			<input pattern="[a-zA-Z]+[a-zA-Z ]+" title="Enter letters only." class="col-sm-4 col-form-control" type="text" v-model="newUser.country" required>
 
-				<br><br>
-				
-				<button id="submit" class="button" type="submit" disabled>Register</button>
-				<div class="container signin">
-					<p>Already have an account? <a href="#/login">Sign in</a>.</p>
+			<br><br>
+			<div class="row">
+				<div class="col-sm-4">
+				</div>
+				<div class="col-sm-2">
+					<button id="submit" class="button btn-lg btn-secondary" type="submit">Register</button>
+				</div>
+				<div class="col-sm-2">
+					<p>Already have an account ? <a style="margin-left:1%" href="/login">Sign in</a>.</p>
 				</div>
 			</div>
-		</form>
-		</div></div></div>
+		</div>
+	</form>
+</div>
 </template>
 
 <script>
@@ -69,6 +71,7 @@ export default {
   methods:{
 		submitForm:function(){
 			console.log(this.newUser)
+			if (this.check_pass()){
 				axios
 				.post('https://localhost:8090/registration/registerUser', this.newUser)
 				.then(response=>{
@@ -76,22 +79,23 @@ export default {
 					this.bool = response.data
 					if(this.bool === true)
 					{
-						console.log("IT IS TRUE")
 						this.$router.push('/emailVerification')
 					}
-					else
-					{
-						Swal.fire('Any fool can use a computer')
+				})
+				.catch(function (error) {
+					if (error.response.status == 409) {
+						Swal.fire('Error', 'User with this e-mail address already exists. Please, sign in or recover your password.', 'error')
 					}
 				})
+			}
 		},
 		check_pass(){
-			if (document.getElementById('password').value ==
+			if (document.getElementById('password').value !=
 					document.getElementById('confirmPassword').value) {
-				document.getElementById('submit').disabled = false;
-			} else {
-				document.getElementById('submit').disabled = true;
-			}
+				Swal.fire('Error', 'Passwords do not match !','error')
+				return false
+			} 
+			return true
 		}
 	},
 	created(){

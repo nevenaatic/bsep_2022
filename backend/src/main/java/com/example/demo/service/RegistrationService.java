@@ -3,6 +3,8 @@ package com.example.demo.service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +34,8 @@ public class RegistrationService {
 	
 	public ResponseEntity<Boolean> registerUser(NewUserDto user)
 	{	
+		if(!isValid(user.password))
+			return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
 		System.out.println(user.toString());
 		String verificationCode = generateVerificationCode();
 		Optional<AppUser> oldUser = Optional.ofNullable(appUserRepository.findByEmail(user.email)); // Mail -> Korisnik
@@ -64,6 +68,12 @@ public class RegistrationService {
 		System.out.println("Korisnik sa ovim mailom postoji ili je nepostojeci mail.");
 		return new ResponseEntity<Boolean>(false, HttpStatus.CONFLICT);
 	}
+	
+	public static boolean isValid(String password) {
+		Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^(*)~]).{8,}$");
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
+    }
 	
     public ResponseEntity<Boolean> verify(String userCode)
 	{	
