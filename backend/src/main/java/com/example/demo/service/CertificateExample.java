@@ -14,6 +14,7 @@ import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
@@ -25,10 +26,12 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.IssuerInfoDTO;
 import com.example.demo.dto.SubjectInfoDTO;
+import com.example.demo.model.AppUser;
 import com.example.demo.model.CertificateData;
 import com.example.demo.model.CertificateType;
 import com.example.demo.model.IssuerData;
 import com.example.demo.model.SubjectData;
+import com.example.demo.model.UserType;
 import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.CertificateRepository;
 
@@ -46,15 +49,16 @@ public class CertificateExample {
 		Security.addProvider(new BouncyCastleProvider());
 	}
 	
-	public void saveCertificate(IssuerInfoDTO issuer, SubjectInfoDTO subject, String dateFrom, String dateUntil, boolean isCA) throws CertIOException {
+	public boolean saveCertificate(IssuerInfoDTO issuer, SubjectInfoDTO subject, String dateFrom, String dateUntil, boolean isCA, List<Integer> extensions) throws CertIOException {
 		try {
 			SubjectData subjectData = generateSubjectData(subject, dateFrom, dateUntil);
 			KeyPair keyPairIssuer = generateKeyPair();
 			IssuerData issuerData = generateIssuerData(keyPairIssuer.getPrivate(), issuer);
-		    
+		    System.out.println(keyPairIssuer.getPrivate());
+		    System.out.println(keyPairIssuer.getPublic());
 			//Generise se sertifikat za subjekta, potpisan od strane issuer-a
 			CertificateGenerator cg = new CertificateGenerator();
-			X509Certificate cert = cg.generateCertificate(subjectData, issuerData);
+			X509Certificate cert = cg.generateCertificate(subjectData, issuerData, isCA, extensions);
 			String subjectKeyId = getKeyID(40);
 			long issuerId = appUserRepository.getUserByEmail(issuer.email).id;
 			CertificateData certData = new CertificateData(subjectData.getSerialNumber(), 
@@ -68,11 +72,21 @@ public class CertificateExample {
 					CertificateType.end_entity);
 			if (isCA)
 				certData.certificateType = CertificateType.CA;
+			
 			//Moguce je proveriti da li je digitalan potpis sertifikata ispravan, upotrebom javnog kljuca izdavaoca
 			cert.verify(keyPairIssuer.getPublic());
 			System.out.println("\nValidacija uspesna :)");
 			
 			certificateRepository.save(certData);
+			AppUser subj = appUserRepository.findById(Long.parseLong(subject.userId)).get();
+			if (isCA)
+				subj.role = UserType.certification_authority; 
+			appUserRepository.save(subj);
+			
+	            KeyStoreWriter privateKeys = new KeyStoreWriter();
+	            privateKeys.loadKeyStore("keys.jks", "keys".toCharArray());
+	            privateKeys.write(subjectData.getSerialNumber(), keyPairIssuer.getPrivate(), "keys".toCharArray(), cert);
+	            privateKeys.saveKeyStore("keys.jks", "keys".toCharArray());
 			
 			String pass = "rootkeystore";
 			String file = "RootKeyStore.jks";
@@ -87,28 +101,34 @@ public class CertificateExample {
 				}
 			}
 			ksw.loadKeyStore(file, pass.toCharArray());
-			ksw.write(subjectKeyId, keyPairIssuer.getPrivate(), pass.toCharArray(), cert);
+			ksw.write(subjectData.getSerialNumber(), keyPairIssuer.getPrivate(), pass.toCharArray(), cert);
 			ksw.saveKeyStore(file, pass.toCharArray());
-			
+			return true;
 			//System.out.println(ksr.readCertificate("RootKeyStore.jks", pass, "qbcdefgh"));
 			//Ovde se desava exception, jer se validacija vrsi putem drugog kljuca
 		} catch(CertificateException e) {
 			e.printStackTrace();
+			return false;
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
+			return false;
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
+			return false;
 		} catch (NoSuchProviderException e) {
 			e.printStackTrace();
+			return false;
 		} catch (SignatureException e) {
 			System.out.println("\nValidacija neuspesna :(");
 			e.printStackTrace();
+			return false; 
 		}
+		
 	}
 	
 	public String getCACertificateById(long id) {
 		for (CertificateData cd : certificateRepository.findAll()) {
-			if (cd.subjectUserId == id && cd.certificateType == CertificateType.CA)
+			if (cd.subjectUserId == id && cd.certificateType == CertificateType.CA && !cd.revoked)
 				return cd.subjectKeyId;
 		}
 		return null;
@@ -151,6 +171,7 @@ public class CertificateExample {
 		    //UID (USER ID) je ID korisnika
 		    builder.addRDN(BCStyle.UID, subject.userId);
 		    builder.addRDN(BCStyle.SERIALNUMBER, sn);
+
 		    //Kreiraju se podaci za sertifikat, sto ukljucuje:
 		    // - javni kljuc koji se vezuje za sertifikat
 		    // - podatke o vlasniku

@@ -4,11 +4,14 @@ import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -26,7 +29,7 @@ public class CertificateGenerator {
 	
 	public CertificateGenerator() {}
 
-	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData) throws CertIOException {
+	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData, boolean isCA, List<Integer> extensions) throws CertIOException {
 		
 		try {
 			//Posto klasa za generisanje sertifiakta ne moze da primi direktno privatni kljuc pravi se builder za objekat
@@ -47,12 +50,18 @@ public class CertificateGenerator {
 					subjectData.getX500name(),
 					subjectData.getPublicKey());
 			ASN1EncodableVector purposes = new ASN1EncodableVector();
-			  purposes.add(KeyPurposeId.id_kp_serverAuth);
 			  purposes.add(KeyPurposeId.id_kp_clientAuth);
 			  purposes.add(KeyPurposeId.anyExtendedKeyUsage);
-			  
-			  certGen.addExtension(Extension.extendedKeyUsage, false, new DERSequence(purposes));
 
+			  int allKeyUsages = 0;
+				for (int i = 0; i < extensions.size(); i++) {
+					allKeyUsages = allKeyUsages + extensions.get(i);
+				}
+				if(extensions.size() > 0)
+					certGen.addExtension(Extension.keyUsage, true, new KeyUsage(allKeyUsages));
+
+			  certGen.addExtension(Extension.extendedKeyUsage, false, new DERSequence(purposes));
+			  certGen.addExtension(Extension.basicConstraints, true, new BasicConstraints(isCA));
 			//Generise se sertifikat
 			X509CertificateHolder certHolder = certGen.build(contentSigner);
 			//certGen.addExtension(Extension.basicConstraints, true, )

@@ -34,17 +34,14 @@ export default {
 					this.isAuthenticated = response.data;
 					if(this.isAuthenticated)
 					{
-						Swal.fire('Good job!','You clicked the button!','success')
 						this.$router.push("/")
 					}
-					else
-					{
-						Swal.fire('Any fool can use a computer')
-					}
+
 				})
-				.error(
-					Swal.fire('Vaš kod je istekao ili nije ispravan. Molimo, pokušajte ponovo')
-				)
+				.catch(err =>{
+					Swal.fire('Your code is wrong or expired. Please, try again')	
+					console.log(err);
+				})
 
 		},
 		home: function(){

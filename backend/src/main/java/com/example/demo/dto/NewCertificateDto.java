@@ -9,11 +9,12 @@ public class NewCertificateDto {
 	public long subjectId;
 	public LocalDate validFrom;
 	public LocalDate validUntil;
-	List<Integer> purposes;
-	List<Integer> extensions;
+	public List<Integer> purposes;
+	public List<Integer> extensions;
+	public boolean isCA;
 	
 	public NewCertificateDto(long issuerId, long subjectId, LocalDate validFrom, LocalDate validUntil,
-			List<Integer> purposes, List<Integer> extensions) {
+			List<Integer> purposes, List<Integer> extensions, boolean isCA) {
 		super();
 		this.issuerId = issuerId;
 		this.subjectId = subjectId;
@@ -21,6 +22,7 @@ public class NewCertificateDto {
 		this.validUntil = validUntil;
 		this.purposes = purposes;
 		this.extensions = extensions;
+		this.isCA = isCA;
 	}
 
 	public NewCertificateDto() {
@@ -30,8 +32,11 @@ public class NewCertificateDto {
 	@Override
 	public String toString() {
 		return "NewCertificateDto [issuerId=" + issuerId + ", subjectId=" + subjectId + ", validFrom=" + validFrom
-				+ ", validUntil=" + validUntil + ", purposes=" + purposes + ", extensions=" + extensions + "]";
+				+ ", validUntil=" + validUntil + ", purposes=" + purposes + ", extensions=" + extensions + ", isCA="
+				+ isCA + "]";
 	}
+
+
 	
 	
 }

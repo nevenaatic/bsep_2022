@@ -19,9 +19,11 @@ import java.util.List;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.springframework.stereotype.Service;
 
 import com.example.demo.model.IssuerData;
 
+@Service
 public class KeyStoreReader {
 	//KeyStore je Java klasa za citanje specijalizovanih datoteka koje se koriste za cuvanje kljuceva
 	//Tri tipa entiteta koji se obicno nalaze u ovakvim datotekama su:

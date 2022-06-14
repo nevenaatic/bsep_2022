@@ -35,7 +35,7 @@ import axios from 'axios'
 
 export default {
   components: {},
-    name: "AdminProfile",
+    name: "MyIssuedCertificates",
 
   data() {
     return {
@@ -48,7 +48,7 @@ export default {
 
   methods: {
     async fetchCertificates() {
-      const res = await fetch("https://localhost:8090/certificate/getAllCertificates");
+      const res = await fetch("https://localhost:8090/certificate/getIssuedCertificatesById/" + 1);
       const data = await res.json();
       return data;
     },
@@ -62,29 +62,28 @@ export default {
 				.post('https://localhost:8090/certificate/checkValidity/' + serial)
 				.then(response => {
 					if(response.data)
-						Swal.fire('Provera uspešna','Sertifikat ' + serial  + ' je validan !','success')
-          else 
-						Swal.fire('Provera uspešna','Sertifikat ' + serial  + ' nije validan !','error')
-        })
-        .catch(err =>{
-          Swal.fire('Error', 'Something went wrong. Please, try again later.','error')
-          console.log(err);
-        })
+						Swal.fire('Check successful','Certificate ' + serial  + ' is valid !','success')
+					else
+						Swal.fire('Check successful','Certificate ' + serial  + ' is NOT valid !','error')
+				})
+                .catch(err =>{
+                    Swal.fire('Error', 'Something went wrong. Please, try again later.','error')
+                    console.log(err);
+                })
     },
 
     revoke(serial) {
     axios
 				.post('https://localhost:8090/certificate/revokeCertificate/' + serial)
 				.then(response => {
-					if(response.data){
+					if(response.data)
 						Swal.fire('Certificate', 'Certificate ' + serial  + ' has been revoked successfully !','success')
-            location.reload();
-          }
-        })
-        .catch(err =>{
-          Swal.fire('Certificate', 'Certificate ' + serial  + ' has NOT been revoked successfully. Try again later','error')
-          console.log(err);
-        })
+                        location.reload();
+				})
+                .catch(err =>{
+                    Swal.fire('Certificate', 'Certificate ' + serial  + ' has NOT been revoked successfully. Try again later','error')
+                    console.log(err);
+                })
     },
 
     async downloadCertificate(serial){
@@ -100,11 +99,13 @@ export default {
                 a.click();
               }
               })
-              .catch(err =>{
+            .catch(err =>{
                 Swal.fire('Certificate', 'Certificate ' + serial  + ' has NOT been downloaded successfully. Try again later','error')
                 console.log(err);
               })
     },
+
+
   },
 
   async created() {
@@ -131,7 +132,6 @@ margin-right: 2.5rem;
   overflow-y: hidden;
   overflow-x: hidden;
 }
-
 
 .informations{
   margin-top: 3rem ;
