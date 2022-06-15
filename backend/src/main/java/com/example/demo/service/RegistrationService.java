@@ -11,13 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.dto.NewUserDto;
 import com.example.demo.model.AppUser;
-import com.example.demo.model.UserType;
+import com.example.demo.model.Role;
 import com.example.demo.model.UserVerifications;
 import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.UserVerificationsRepository;
@@ -31,6 +30,16 @@ public class RegistrationService {
 	private JavaMailSender javaMailSender;
 	@Autowired
 	private UserVerificationsRepository userVerificationsRepository;
+	@Autowired
+	private RoleService roleService; 
+
+	private PasswordEncoder passwordEncoder;
+	
+	public RegistrationService() {}
+	
+	public RegistrationService(PasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+	}
 	
 	public ResponseEntity<Boolean> registerUser(NewUserDto user)
 	{	
@@ -56,7 +65,9 @@ public class RegistrationService {
 					}
 				};
 				t.start();	
-				AppUser appUser = new AppUser(user.name, user.surname, user.email, user.password, user.address, user.city, user.country, UserType.end_user);
+				Role role = new Role("end_entity");
+		        roleService.save(role);
+				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role);
 				appUserRepository.save(appUser);		
 				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 			} 

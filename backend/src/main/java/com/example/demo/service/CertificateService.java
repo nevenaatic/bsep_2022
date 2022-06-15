@@ -94,15 +94,15 @@ public class CertificateService {
     	List<AppUser> users = appUserService.findAll();
     	for (AppUser au : users) {
     		boolean isCA = false;
-    		if (au.role != UserType.admin) {
+    		if (!au.role.getName().equals("admin")) {
     			for (CertificateData c : certificateRepository.getCertificatesBySubjectUserId(au.id))
     				if (!c.revoked && c.certificateType == CertificateType.CA)
     					isCA = true;
     		}
     		if (!isCA) {
-    			au.role = UserType.end_user;
+    			au.role.setName("end_user");
     		} else {
-    			au.role = UserType.certification_authority;
+    			au.role.setName("certification_authority");
     		}
     	}
     	appUserService.saveAll(users);
