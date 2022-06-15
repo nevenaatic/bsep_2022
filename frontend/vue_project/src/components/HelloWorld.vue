@@ -34,13 +34,28 @@
 </template>
 
 <script>
+
 export default {
   name: 'HelloWorld',
  methods: {
 
     singIn: function(){
      this.$router.push({name: 'AdminProfile'})
-   }
+   },
+  /*
+   generateQR() {
+    const speakeasy = require('speakeasy')
+    const qrcode = require('qrcode')
+
+    var secret = speakeasy.generateSecret({
+        name: "PKI App"
+    })
+
+    qrcode.toDataURL(secret.otpauth_url, function(err, data){
+        console.log(data)
+    })
+  }
+   */
  }
 }
 </script>
@@ -95,5 +110,5 @@ li {
 }
 a {
   color: #42b983;
-}
+} 
 </style>
