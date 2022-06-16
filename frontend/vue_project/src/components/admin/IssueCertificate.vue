@@ -96,6 +96,7 @@ export default {
       users: [],
       certificateDTO : {issuerId:1, subjectId:1, validFrom: null, validUntil: null,
 			purposes: [], extensions: [], isCA: false},
+      userId: "",
     };
   },
 
@@ -120,6 +121,7 @@ export default {
   },
 
   async issueCertificate() {
+    this.issuerId = this.userId;
     await this.formatKeyUsages()
     console.log(this.certificateDTO.extensions)
     if (this.checkValidity() === true){
@@ -170,6 +172,7 @@ export default {
 
   async mounted() {
     this.users = await this.fetchUsers();
+    this.userId = localStorage.getItem("id")
   }
 };
 

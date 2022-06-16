@@ -63,7 +63,7 @@ public class RegistrationService {
 				t.start();	
 				Role role = new Role("ROLE_end_entity");
 		        roleService.save(role);
-				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role);
+				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role, user.twoFA);
 				appUserRepository.save(appUser);		
 				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 			} 

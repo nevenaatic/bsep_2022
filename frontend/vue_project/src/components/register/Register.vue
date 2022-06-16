@@ -38,6 +38,13 @@
 			<label class="col-sm-4 col-form-label" for="country"><b>Country</b></label>
 			<input pattern="[a-zA-Z]+[a-zA-Z ]+" title="Enter letters only." class="col-sm-4 col-form-control" type="text" v-model="newUser.country" required>
 
+			<div class="form-check" style=" margin-top: 1%; margin-left:35%">
+                <input class="form-check-input" type="checkbox" value="" id="2FA">
+                <label class="form-check-label" for="Key Agreement">
+                  Enable 2-Factor-Authentication
+                </label>
+              </div>
+
 			<br><br>
 			<div class="row">
 				<div class="col-sm-4">
@@ -63,19 +70,19 @@ export default {
 	name: "RegisterComponent",
   data() {
 	return {
-		newUser: {name:"", surname:"", email:"", password:"", address:"", city:"", country:"", verificationCode:"1", verified:false
+		newUser: {name:"", surname:"", email:"", password:"", address:"", city:"", country:"", verificationCode:"1", verified:false, twoFA: false
 		},
 		};
   },
 
   methods:{
 		submitForm:function(){
-			console.log(this.newUser)
-			if (this.check_pass()){
+			if (document.getElementById("2FA").checked == true)
+				this.newUser.twoFA = true;
+				console.log(this.newUser)
 				axios
 				.post('https://localhost:8090/registration/registerUser', this.newUser)
 				.then(response=>{
-					localStorage.setItem('email', this.newUser.email)
 					this.bool = response.data
 					if(this.bool === true)
 					{
@@ -87,19 +94,10 @@ export default {
 						Swal.fire('Error', 'User with this e-mail address already exists. Please, sign in or recover your password.', 'error')
 					}
 				})
-			}
 		},
-		check_pass(){
-			if (document.getElementById('password').value !=
-					document.getElementById('confirmPassword').value) {
-				Swal.fire('Error', 'Passwords do not match !','error')
-				return false
-			} 
-			return true
-		}
 	},
 	created(){
-		localStorage.removeItem('email')
+		
 	}
 }
 

@@ -1,61 +1,73 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
+const { JsonDB } = require('node-json-db')
+const { Config } = require('node-json-db/dist/lib/JsonDBConfig')
 const PORT = 8085;
+
 app.use( express.json() )
-
-const speakeasy = require('speakeasy')
-const qrcode = require('qrcode')
-var QRcode;
-var retVerify;
-
-
+app.use(cors())
 app.listen(
     PORT,
     () => console.log(`it's alive on http://localhost:${PORT}`)
 )
+const speakeasy = require('speakeasy')
+const qrcode = require('qrcode')
 
-app.get('/getQRCode', (req, res) => {
-    generateCode()
-    setTimeout(function() {
-    res.status(200).send({
-        code: QRcode,
-    })
-    }, 200)
-});
+const db = new JsonDB(new Config('PKI_Database', true, false, '/'))
 
-app.post('/verifyCode/', (req, res) => {
+//Register user    
+app.post('/register/:id', (req, res) => {
+    const { id } = req.params;
+    const path = `/user/${id}`
+    try {
+        db.getData(path)
+        res.status(200).json({alreadyRegistered: true})
+    } catch (error){
+        try{
+            const temp_secret = speakeasy.generateSecret({
+                name: "PKI App"
+            })
+            db.push(path, {id,  temp_secret})
+            qrcode.toDataURL(temp_secret.otpauth_url, function(err, data){
+                console.log(data)
+                res.json({qrCode: data})
+            })
+            //res.json({id, secret: temp_secret.base32})
+        }
+        catch(error) {
+            console.log(error)
+            res.status(500).json({ message: 'Error generating secret'})
+        }
+    }
+})
 
-    //const { code } = req.params;
-    const { code } = req.body;
-    verify(code)
-    console.log(code)
-    res.status(200).send({
-        result: retVerify
-    })
-});
+//Verify token and make secret perm
+app.post('/verify', (req, res) => {
+    const {token, userId} = req.body
+    console.log(userId)
+    console.log(token)
+    try{
+        const path = `/user/${userId}`
+        const user = db.getData(path)
 
-var secret;
-function generateCode(){
+        const { base32:secret } = user.temp_secret
 
-    secret = speakeasy.generateSecret({
-        name: "PKI App"
-    })
+        const verified = speakeasy.totp.verify({
+            secret,
+            encoding: 'base32',
+            token: token
+        })
+        if (verified) {
+            //db.push(path, {id: userId, secret: user.temp_secret})
+            res.json({verified: true})
+        } else {
+            res.json({verified: false})
+        }
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).json({ message: 'Error finding user'})
+    }
+})
 
-    qrcode.toDataURL(secret.otpauth_url, function(err, data){
-        console.log(data)
-        QRcode = data
-    })
-}
-
-function verify(code) {
-    console.log(code)
-    console.log(secret)
-    console.log(secret.ascii)
-    var verified = speakeasy.totp.verify({
-        secret: secret.ascii,
-        encoding: 'ascii',
-        token: code
-    })
-    console.log(verified)
-    retVerify = verified;
-}
