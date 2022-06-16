@@ -11,12 +11,17 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
+import org.apache.log4j.Logger;
+
 
 @SpringBootApplication
 @EnableWebSecurity
 public class DemoApplication {
 	
 	public static void main(String[] args) {
+
+	
+	
 		SpringApplication.run(DemoApplication.class, args);
 		
 	}

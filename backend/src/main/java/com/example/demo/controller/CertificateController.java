@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.security.cert.Certificate;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.cert.CertIOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -52,7 +53,10 @@ public class CertificateController {
 		this.certificateService = certificateService;
 		this.appUserService = appUserService;
 	}
-
+	final static Logger loggerErr = Logger.getLogger("errorLogger"); 
+	final static Logger loggerInfo = Logger.getLogger("infoLogger");
+	final static Logger loggerWarn = Logger.getLogger("warnLogger");
+	
 	@PostMapping(path = "/createCertificate")
 	public ResponseEntity<Boolean> createCertificate(@RequestBody NewCertificateDto certificateDTO) throws CertIOException
 	{
@@ -62,25 +66,34 @@ public class CertificateController {
 		AppUser subject = appUserService.findById(certificateDTO.subjectId);
 		SubjectInfoDTO subjectDTO = new SubjectInfoDTO(subject.name, subject.surname,"", "", "RS", subject.email, String.valueOf(subject.id));
 		if (certGen.saveCertificate(issuerDTO, subjectDTO, certificateDTO.validFrom.toString(), certificateDTO.validUntil.toString(), certificateDTO.isCA, certificateDTO.extensions))
+			{
+			loggerInfo.info("Created certificate for subject id " + subject.id + " by issuer id "+ issuer.id);
 			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+			}
+		else {
+		loggerErr.error("Can't create certificate issuer id " + issuer.id +" and subject id " + subject.id);
 		return  new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 	}
 	
 	@PostMapping(path = "/revokeCertificate/{serialNumber}")
 	public  ResponseEntity<Boolean> revokeCertificate(@PathVariable("serialNumber") String serialNumber)
 	{
+		loggerInfo.info("Certificate with serial number " + serialNumber + " is revoked ");
 		return new ResponseEntity<Boolean>(certificateService.revokeCertificate(serialNumber), HttpStatus.OK);
 	}
 	
 	@PostMapping(path = "/checkCertificateValidity/{userId}")
 	public boolean checkCertificateValidity()
 	{
+		
 		return true;
 	}
 	
 	@GetMapping(path = "/getAllCertificates")
 	public ResponseEntity<List<CertificateFrontDto>> getAllCertificates()
 	{
+		
 		return new ResponseEntity<List<CertificateFrontDto>>(certificateService.formatCertificateFrontData(), HttpStatus.OK);
 	}
 	
@@ -107,7 +120,7 @@ public class CertificateController {
 	
 	@PostMapping(value = "/checkValidity/{serialCode}")
 	public ResponseEntity<Boolean> isCertificateValid(@PathVariable("serialCode") String serialCode) throws CertificateException, NoSuchAlgorithmException, Exception, GeneralSecurityException, Exception {
-		
+		loggerInfo.info("Checking certificate " + serialCode + " validity... ");
 		return new ResponseEntity<Boolean> (certificateService.isCertificateValidTEST(serialCode), HttpStatus.OK);
 	}
 
@@ -119,7 +132,7 @@ public class CertificateController {
         File file = new File(serial + ".crt");
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
         file.deleteOnExit();
-
+        loggerInfo.info("Download certificate ");
         return ResponseEntity.ok()
                 .contentLength(file.length())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
