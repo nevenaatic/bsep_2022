@@ -62,13 +62,15 @@ public class AppUser implements UserDetails  {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "role_id")
 	public Role role;
+	@Column
+	public boolean twoFa;
 	
 	public AppUser() {
 		super();
 	}
 	
 	public AppUser(long id, String name, String surname, String email, String password, String address, String city,
-			String country,  Role role) {
+			String country,  Role role, boolean twoFA) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -79,10 +81,11 @@ public class AppUser implements UserDetails  {
 		this.city = city;
 		this.country = country;
 		this.role = role;
+		this.twoFa = twoFA;
 	}
 	
 	public AppUser(String name, String surname, String email, String password, String address, String city,
-			String country, Role role) {
+			String country, Role role, boolean twoFA) {
 		super();
 		this.name = name;
 		this.surname = surname;
@@ -92,6 +95,7 @@ public class AppUser implements UserDetails  {
 		this.city = city;
 		this.country = country;
 		this.role = role;
+		this.twoFa = twoFA;
 	}
 	
 	public AppUser(UserDetails ret) {

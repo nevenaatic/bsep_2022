@@ -77,7 +77,7 @@ public class RegistrationController {
         catch (Exception ex){
         	loggerErr.error("failed login");
         	System.out.println(ex);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -86,12 +86,12 @@ public class RegistrationController {
         String jwt = tokenUtils.generateToken(user.email);
         int expiresIn = tokenUtils.getExpiredIn();
         if (user.isEnabled() == false){
-            return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password()));
+            return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password(), user.twoFa, user.id));
         }
         loggerInfo.info("User id " + user.id +" is logged in");
         
         // Vrati token kao odgovor na uspesnu autentifikaciju
-        return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password()));
+        return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password(), user.twoFa, user.id));
     }
 	
 	/*

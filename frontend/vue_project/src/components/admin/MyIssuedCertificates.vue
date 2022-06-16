@@ -13,7 +13,7 @@
       <li class="list-group-item">Subject Email: {{c.subjectEmail}}</li>
       <li class="list-group-item">Isser name: {{c.issuerFullName}}</li>
       <li class="list-group-item">Issuer Email: {{c.issuerEmail}}</li>
-      <li class="list-group-item">Valid: {{c.validFrom.substring(8,10)}}.{{c.validFrom.substring(5,7)}}.{{c.validFrom.substring(0,4)}} - {{c.validUntil.substring(8,10)}}.{{c.validUntil.substring(5,7)}}.{{c.validUntil.substring(0,4)}}.</li>
+      <li class="list-group-item">Valid: {{new Date(c.validFrom).toLocaleString()}} - {{new Date(c.validFrom).toLocaleString()}}</li>
       <li v-if="c.revoked" style="color: red" class="list-group-item">Certificate is revoked !</li>
       <li v-if="!c.revoked" style="color: green" class="list-group-item">Certificate is not revoked !</li>
     </ul>
@@ -40,15 +40,13 @@ export default {
   data() {
     return {
       certificates: [],
-      name: "",
-      street: "",
-      city: "",
+      userId: "",
     };
   },
 
   methods: {
     async fetchCertificates() {
-      const res = await fetch("https://localhost:8090/certificate/getIssuedCertificatesById/" + 1);
+      const res = await fetch("https://localhost:8090/certificate/getIssuedCertificatesById/" + this.userId);
       const data = await res.json();
       return data;
     },
@@ -110,6 +108,7 @@ export default {
 
   async created() {
     this.certificates = await this.fetchCertificates();
+    this.userId = localStorage.getItem("id")
   },
 };
 

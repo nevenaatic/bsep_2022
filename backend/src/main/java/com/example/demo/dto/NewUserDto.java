@@ -13,9 +13,10 @@ public class NewUserDto {
 	public String country;
 	public boolean verified;
 	public String verificationCode;
+	public boolean twoFA;
 	
 	public NewUserDto(String name, String surname, String email, String password, String address, String city,
-			String country, boolean verified, String verificationCode) {
+			String country, boolean verified, String verificationCode, boolean twoFA) {
 		super();
 		this.name = name;
 		this.surname = surname;
@@ -26,6 +27,7 @@ public class NewUserDto {
 		this.country = country;
 		this.verified = verified;
 		this.verificationCode = verificationCode;
+		this.twoFA = twoFA;
 	}
 	
 	public NewUserDto() {
@@ -36,8 +38,10 @@ public class NewUserDto {
 	public String toString() {
 		return "NewUserDto [name=" + name + ", surname=" + surname + ", email=" + email + ", password=" + password
 				+ ", address=" + address + ", city=" + city + ", country=" + country + ", verified=" + verified
-				+ ", verificationCode=" + verificationCode + "]";
+				+ ", verificationCode=" + verificationCode + ", twoFA=" + twoFA + "]";
 	}
+
+	
 	
 	
 	
