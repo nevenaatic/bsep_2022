@@ -48,6 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth
                 .userDetailsService(customUserDetailsService)
                 .passwordEncoder(passwordEncoder());
+        
     }
 
     @Autowired
@@ -60,12 +61,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
-                .authorizeRequests().antMatchers("/registration/registerUser").permitAll()
+                .authorizeRequests()
+                
+                .antMatchers("/registration/registerUser").permitAll()
                 .antMatchers("/registration/login").permitAll()
                 .antMatchers("/registration/emailVerification").permitAll()
+                
+                .antMatchers("/appUser/getAllUsers").hasAuthority("PERM_GET_ALL_USERS")
+         
+                .antMatchers("/certificate/createCertificate").hasAuthority("PERM_CERT_ISSUE")
+                .antMatchers("/certificate/checkCertificateValidity").hasAuthority("PERM CERT_CHECK_VALIDITY")
+                .antMatchers("/certificate/revokeCertificate").hasAuthority("PERM_CERT_REVOKE")
+                ///certificate/getAllCertificates
+                ///getCertificatesById/{userId}
+                ///getIssuedCertificatesById/{userId}
+                .antMatchers("/certificate/revoke/**").hasAuthority("PERM_CERT_REVOKE")
+                .antMatchers("/certificate/checkValidity/**").hasAuthority("PERM CERT_CHECK_VALIDITY")
+                .antMatchers("/certificate/downloadCertificate").hasAuthority("PERM_CERT_DOWNLOAD")
+                
                 .anyRequest().authenticated().and()
-
-
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, customUserDetailsService), BasicAuthenticationFilter.class);
 

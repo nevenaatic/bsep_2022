@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.cert.CertIOException;
@@ -30,8 +29,9 @@ import com.example.demo.model.AppUser;
 import com.example.demo.model.CertificateData;
 import com.example.demo.model.CertificateType;
 import com.example.demo.model.IssuerData;
+import com.example.demo.model.PermissionRole;
+import com.example.demo.model.Role;
 import com.example.demo.model.SubjectData;
-import com.example.demo.model.UserType;
 import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.CertificateRepository;
 
@@ -44,6 +44,10 @@ public class CertificateExample {
 	private CertificateRepository certificateRepository; 
 	@Autowired
 	private AppUserRepository appUserRepository;
+	@Autowired
+	private RoleService roleService; 
+	@Autowired
+	private PermissionRoleService permissionRoleService; 
 	
 	public CertificateExample() {
 		Security.addProvider(new BouncyCastleProvider());
@@ -79,10 +83,30 @@ public class CertificateExample {
 			
 			certificateRepository.save(certData);
 			AppUser subj = appUserRepository.findById(Long.parseLong(subject.userId)).get();
-			if (isCA)
-				subj.role.getName().equals("certification_authority"); 
-			appUserRepository.save(subj);
-			
+			if (isCA) {
+				Role role = roleService.findByName("ROLE_CA");
+				if (role == null) {
+					role = new Role("ROLE_CA");
+					roleService.save(role);
+					PermissionRole permCertDownload = new PermissionRole("PERM_CERT_DOWNLOAD");
+					permCertDownload.setRole(role);
+					permissionRoleService.save(permCertDownload);
+					PermissionRole permCertCheckValidity = new PermissionRole("PERM_CERT_CHECK_VALIDITY");
+					permCertCheckValidity.setRole(role);
+					permissionRoleService.save(permCertCheckValidity);	
+					PermissionRole permCertCheckRevoke = new PermissionRole("PERM_CERT_REVOKE");
+					permCertCheckRevoke.setRole(role);
+					permissionRoleService.save(permCertCheckRevoke);
+					PermissionRole permGetNonAdmins = new PermissionRole("PERM_GET_NON_ADMINS");
+					permGetNonAdmins.setRole(role);
+					permissionRoleService.save(permGetNonAdmins);
+					PermissionRole permCertIssue = new PermissionRole("PERM_CERT_ISSUE ");
+					permCertIssue.setRole(role);
+					permissionRoleService.save(permCertIssue);
+				}
+				subj.role = role;
+			    appUserRepository.save(subj);
+			}
 	            KeyStoreWriter privateKeys = new KeyStoreWriter();
 	            privateKeys.loadKeyStore("keys.jks", "keys".toCharArray());
 	            privateKeys.write(subjectData.getSerialNumber(), keyPairIssuer.getPrivate(), "keys".toCharArray(), cert);

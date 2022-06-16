@@ -1,34 +1,42 @@
-INSERT INTO role(name) VALUES ('admin');
-INSERT INTO role(name) VALUES ('admin');
-INSERT INTO role(name) VALUES ('admin');
-INSERT INTO role(name) VALUES ('admin');
+INSERT INTO role (name) VALUES ('ROLE_ADMIN');
+INSERT INTO role (name) VALUES ('ROLE_CA');
+INSERT INTO role (name) VALUES ('ROLE_END_ENTITY');
 
-INSERT INTO role(name) VALUES ( 'certification_authority');
-INSERT INTO role(name) VALUES ( 'certification_authority');
-INSERT INTO role(name) VALUES ( 'certification_authority');
-INSERT INTO role(name) VALUES ( 'certification_authority');
+--ADMIN
+INSERT INTO permission (name, role_id) VALUES ('PERM_CERT_DOWNLOAD', 1);
+INSERT INTO permission (name, role_id) VALUES ('PERM_CERT_REVOKE', 1);
+INSERT INTO permission (name, role_id) VALUES ('PERM CERT_CHECK_VALIDITY', 1);
+INSERT INTO permission (name, role_id) VALUES ('PERM_GET_ALL_USERS', 1);
+INSERT INTO permission (name, role_id) VALUES ('PERM_GET_NON_ADMINS', 1);
+INSERT INTO permission (name, role_id) VALUES ('PERM_CERT_ISSUE', 1);
 
-INSERT INTO role( name) VALUES ( 'end_user');
-INSERT INTO role( name) VALUES ( 'end_user');
-INSERT INTO role( name) VALUES ( 'end_user');
-INSERT INTO role( name) VALUES ( 'end_user');
+--CA
+INSERT INTO permission (name, role_id) VALUES ('PERM_CERT_DOWNLOAD', 2);
+INSERT INTO permission (name, role_id) VALUES ('PERM_CERT_REVOKE', 2);
+INSERT INTO permission (name, role_id) VALUES ('PERM CERT_CHECK_VALIDITY', 2);
+INSERT INTO permission (name, role_id) VALUES ('PERM_GET_NON_ADMINS', 2);
+INSERT INTO permission (name, role_id) VALUES ('PERM_CERT_ISSUE', 2);
+
+--END USER
+INSERT INTO permission (name, role_id) VALUES ('PERM_CERT_DOWNLOAD', 3);
+INSERT INTO permission (name, role_id) VALUES ('PERM CERT_CHECK_VALIDITY', 3);
 
 --password nevena
 
 insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'nevena@hotmail.com', 'Nevena', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 1, 'Atic', true, '1');
-insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Pavla Papa', 'Novi Sad', 'Srbija', 'pavle@hotmail.com', 'Pavle', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 2, 'Misic', true, '1');
-insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'jovan@hotmail.com', 'Jovan', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 3, 'Cvijic', true, '1');
-insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'nikola@hotmail.com', 'Nikola', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 4, 'Mijatovic', true, '1');
+insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Pavla Papa', 'Novi Sad', 'Srbija', 'pavle@hotmail.com', 'Pavle', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 1, 'Misic', true, '1');
+insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'jovan@hotmail.com', 'Jovan', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 1, 'Cvijic', true, '1');
+insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'nikola@hotmail.com', 'Nikola', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 1, 'Mijatovic', true, '1');
 
-insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'mitaa@hotmail.com', 'Mita', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 5, 'Lahic', true, '1');
-insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Pavla Papa', 'Novi Sad', 'Srbija', 'ivan@hotmail.com', 'Ivan', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 6, 'Majkic', true, '1');
-insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'steva@hotmail.com', 'Steva', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 7, 'Bakic', true, '1');
-insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'paja@hotmail.com', 'Paja', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 8, 'Rokic', true, '1');
+insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'mitaa@hotmail.com', 'Mita', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 2, 'Lahic', true, '1');
+insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Pavla Papa', 'Novi Sad', 'Srbija', 'ivan@hotmail.com', 'Ivan', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 2, 'Majkic', true, '1');
+insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'steva@hotmail.com', 'Steva', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 2, 'Bakic', true, '1');
+insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'paja@hotmail.com', 'Paja', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 2, 'Rokic', true, '1');
 
-insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'mica@hotmail.com', 'Mica', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 9, 'Kosic', true, '1');
-insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Pavla Papa', 'Novi Sad', 'Srbija', 'ana@hotmail.com', 'Ana', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 10, 'Bekic', true, '1');
-insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'misa@hotmail.com', 'Misa', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 11, 'Mitrovic', true, '1');
-insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'aca@hotmail.com', 'Aca', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 12, 'Markovic', true, '1');
+insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'mica@hotmail.com', 'Mica', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 3, 'Kosic', true, '1');
+insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Pavla Papa', 'Novi Sad', 'Srbija', 'ana@hotmail.com', 'Ana', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 3, 'Bekic', true, '1');
+insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'misa@hotmail.com', 'Misa', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 3, 'Mitrovic', true, '1');
+insert into app_user (id, address, city, country, email, name, password, role_id, surname, verified, verification_code) values (nextval('my_user_seq'), 'Lilie Bem', 'Novi Sad', 'Srbija', 'aca@hotmail.com', 'Aca', '$2a$10$S6VHCehpPiJgV3NStRbB7OkqE3U4QjfxdFbVw2dSmTPTUkykY1rjy', 3, 'Markovic', true, '1');
 
 insert into certificate_data (id, serial_code, subject_user_id, issuer_user_id, subject_key_id, issuer_key_id, valid_from, valid_until, revoked, certificate_type) values 
 (nextval('certificate_seq'), '11111111', 1, 1, 'aaaaaaaa', 'aaaaaaaa', '2022-04-10', '2030-12-12', false, 'CA');

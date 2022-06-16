@@ -4,6 +4,7 @@ import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -46,9 +47,6 @@ public class AppUser implements UserDetails  {
 	public String city;
 	@Column
 	public String country;
-//	@Enumerated(value = EnumType.STRING)
-//	@Column
-//	public UserType role;
 	@Column
 	public boolean verified;
 	@Column
@@ -96,13 +94,16 @@ public class AppUser implements UserDetails  {
 		this.role = role;
 	}
 	
-	
-	
+	public AppUser(UserDetails ret) {
+		this.email = ret.getUsername();
+		this.password = ret.getPassword();
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		List<Role> collection = new ArrayList<Role>();
-		collection.add(this.role);
-		return collection;
+		Set<PermissionRole> collection =  this.role.getPerimissions();
+		return (Collection<? extends GrantedAuthority>) collection;
 	}
 
 	public String getPassword() {
@@ -134,7 +135,7 @@ public class AppUser implements UserDetails  {
 		return verified;
 	}
 
-public Timestamp getLastPasswordResetDate() {
+	public Timestamp getLastPasswordResetDate() {
 		return lastPasswordResetDate;
 	}
 
