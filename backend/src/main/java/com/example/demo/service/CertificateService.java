@@ -24,6 +24,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
@@ -45,6 +46,11 @@ public class CertificateService {
 	@Autowired
 	private KeyStoreReader keyStoreReader;
 	
+	
+	final static Logger loggerErr = Logger.getLogger("errorLogger");
+	final static Logger loggerInfo = Logger.getLogger("infoLogger");
+	final static Logger loggerWarn = Logger.getLogger("warnLogger");
+	
 	public List<CertificateData> findAll() {
 		return certificateRepository.findAll();
 	}
@@ -55,6 +61,7 @@ public class CertificateService {
 		for (CertificateData c : allCerts) {
 			if (c.id == certificate.id) {
 				c.revoked = true;
+				loggerWarn.warn("Certificate with serial number " + serialNumber + " is revoked!");
 				break;
 			}
 		}
@@ -104,7 +111,9 @@ public class CertificateService {
     		} else {
     			au.role = UserType.certification_authority;
     		}
+    		loggerInfo.info("Status for user " + au.id +" is changed.");
     	}
+    	
     	appUserService.saveAll(users);
     }
     
@@ -112,10 +121,12 @@ public class CertificateService {
     	CertificateData certificateFromDatabase = certificateRepository.getCertificateByCode(serialCode);
     	
     	if (certificateFromDatabase.revoked) {
+    		loggerInfo.info("Certificate  " + serialCode + " is valid");
     		return false;
     	}
     	
     	if (!certificateFromDatabase.validFrom.before(new Date()) || !certificateFromDatabase.validUntil.after(new Date())) {
+    		loggerInfo.info("Certificate  " + serialCode + " isn't valid");
     		return false;
     	}
     	try {
@@ -128,6 +139,7 @@ public class CertificateService {
 			issurerCertificateFromKeyStore.verify(issurerCertificateFromKeyStore.getPublicKey());
     	} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
 				| SignatureException e) {
+    		loggerErr.error(" failed - can't check validity.");
     		e.printStackTrace();
     		return false;
 		}
@@ -188,6 +200,7 @@ public class CertificateService {
 			certificateFromKeyStore.verify(issurerCertificateFromKeyStore.getPublicKey());
 		} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
 				| SignatureException e) {
+			loggerErr.error(" failed - can't check CA");
 			e.printStackTrace();
 		}
     	
@@ -217,6 +230,7 @@ public class CertificateService {
 			certificateFromKeyStore.verify(issurerCertificateFromKeyStore.getPublicKey());
 		} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
 				| SignatureException e) {
+			loggerErr.error(" failed - can't check EE");
 			e.printStackTrace();
 		}
     	
@@ -275,6 +289,8 @@ public class CertificateService {
         os.write(Base64.getEncoder().encode(certificate.getEncoded()));
         os.write("\n-----END CERTIFICATE-----\n".getBytes(StandardCharsets.US_ASCII));
         os.close();
+        loggerInfo.info("Extracting certificate " + serialNumber);
+        
        // if(!certificateDto.getAuthoritySubject().equals("ca"))
             return true;
         /*PrivateKey key = new KeyStoreReader().readPrivateKey(env.getProperty("keystore.path") + "keys.jks", "12345", certificateDto.getSerialNumberSubject(), "12345");
