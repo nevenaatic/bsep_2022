@@ -48,6 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth
                 .userDetailsService(customUserDetailsService)
                 .passwordEncoder(passwordEncoder());
+        
     }
 
     @Autowired
@@ -63,6 +64,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/registration/registerUser").permitAll()
                 .antMatchers("/registration/login").permitAll()
                 .antMatchers("/registration/emailVerification").permitAll()
+                .antMatchers("/registration/test").hasAuthority("PERM_CERT_DOWNLOAD")
+         
                 .anyRequest().authenticated().and()
 
 

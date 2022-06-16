@@ -137,6 +137,7 @@ public class TokenUtils {
 
 
     public Boolean validateToken(String token, UserDetails userDetails) {
+    	System.out.println(userDetails);
         AppUser user = (AppUser) userDetails;
         final String username = getEmailFromToken(token);
         final Date created = getIssuedAtDateFromToken(token);

@@ -79,10 +79,10 @@ public class CertificateExample {
 			
 			certificateRepository.save(certData);
 			AppUser subj = appUserRepository.findById(Long.parseLong(subject.userId)).get();
-			if (isCA)
+			if (isCA) {
 				subj.role.getName().equals("certification_authority"); 
-			appUserRepository.save(subj);
-			
+			    appUserRepository.save(subj);
+			}
 	            KeyStoreWriter privateKeys = new KeyStoreWriter();
 	            privateKeys.loadKeyStore("keys.jks", "keys".toCharArray());
 	            privateKeys.write(subjectData.getSerialNumber(), keyPairIssuer.getPrivate(), "keys".toCharArray(), cert);

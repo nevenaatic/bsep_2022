@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.NewUserDto;
 import com.example.demo.model.AppUser;
+import com.example.demo.model.PermissionRole;
 import com.example.demo.model.Role;
 import com.example.demo.model.UserVerifications;
 import com.example.demo.repository.AppUserRepository;
@@ -32,6 +33,8 @@ public class RegistrationService {
 	private UserVerificationsRepository userVerificationsRepository;
 	@Autowired
 	private RoleService roleService; 
+	@Autowired
+	private PermissionRoleService permissionRoleService; 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
@@ -61,10 +64,21 @@ public class RegistrationService {
 					}
 				};
 				t.start();	
-				Role role = new Role("ROLE_end_entity");
-		        roleService.save(role);
+				Role role = roleService.findByName("ROLE_END_ENTITY");
+					if (role == null) {
+						role = new Role("ROLE_END_ENTITY");
+						roleService.save(role);
+						PermissionRole permCertDownload = new PermissionRole("PERM_CERT_DOWNLOAD");
+						permCertDownload.setRole(role);
+						permissionRoleService.save(permCertDownload);
+						PermissionRole permCertCheckValidity = new PermissionRole("PERM_CERT_CHECK_VALIDITY");
+						permCertCheckValidity.setRole(role);
+						permissionRoleService.save(permCertCheckValidity);	
+					}
 				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role);
-				appUserRepository.save(appUser);		
+				
+				appUserRepository.save(appUser);	
+				
 				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 			} 
 			catch (Exception e) 

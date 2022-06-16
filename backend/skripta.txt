@@ -1,14 +1,14 @@
-INSERT INTO role(name) VALUES ('admin');
+INSERT INTO role(name) VALUES ('ROLE_ADMIN');
 INSERT INTO role(name) VALUES ('admin');
 INSERT INTO role(name) VALUES ('admin');
 INSERT INTO role(name) VALUES ('admin');
 
-INSERT INTO role(name) VALUES ( 'certification_authority');
+INSERT INTO role(name) VALUES ( 'ROLE_CA');
 INSERT INTO role(name) VALUES ( 'certification_authority');
 INSERT INTO role(name) VALUES ( 'certification_authority');
 INSERT INTO role(name) VALUES ( 'certification_authority');
 
-INSERT INTO role( name) VALUES ( 'end_user');
+INSERT INTO role( name) VALUES ( 'ROLE_END_USER');
 INSERT INTO role( name) VALUES ( 'end_user');
 INSERT INTO role( name) VALUES ( 'end_user');
 INSERT INTO role( name) VALUES ( 'end_user');

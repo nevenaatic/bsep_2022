@@ -15,9 +15,11 @@ public class RoleService {
         this.roleRepository=roleRepository;
     }
 
-    public Role save(Role role) { return this.roleRepository.save(role);}
+    public Role save(Role role) { 
+    	return this.roleRepository.save(role);}
 
-    public void saveRole(Role role) {  this.roleRepository.save(role);}
+    public void saveRole(Role role) {  
+    	this.roleRepository.save(role);}
 
     public void deleteById(int id) {
         this.roleRepository.deleteById(id);
@@ -27,8 +29,16 @@ public class RoleService {
         this.roleRepository.delete(role);
     }
 
-    public Role findById(int id){ return this.roleRepository.findById(id);}
+    public Role findById(int id){ 
+    	return this.roleRepository.findById(id);
+    }
 
-    public Role findByName(String name){ return this.roleRepository.findByName(name);}
+    public Role findByName(String name){ 
+    	return this.roleRepository.findByName(name);
+   }
+
+	public Role findByNameWithPermissions(String name) {
+		return this.roleRepository.findByNameWithPermissions(name);
+	}
 
 }

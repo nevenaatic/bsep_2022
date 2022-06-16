@@ -41,7 +41,6 @@ public class RegistrationController {
 	public RegistrationController() {
 	}
 	
-	//@PreAuthorize("hasAnyRole('admin','end_entity','certification_authority')")
 	@PostMapping(path = "/registerUser")
 	public ResponseEntity<Boolean> registerUser(@RequestBody NewUserDto user)
 	{	
@@ -54,7 +53,6 @@ public class RegistrationController {
 		return registrationService.verify(userCode);
 	}
 	
-	@PreAuthorize("hasAnyRole('end_entity')")
 	@GetMapping("/test")
 	public ResponseEntity<AppUser> get(){
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -66,8 +64,6 @@ public class RegistrationController {
     public ResponseEntity<UserTokenState> createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest) throws Exception {
 
-        // Ukoliko kredencijali nisu ispravni, logovanje nece biti uspesno, desice se
-        // AuthenticationException
         Authentication authentication = null;
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -78,11 +74,8 @@ public class RegistrationController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        // Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security
-        // kontekst
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Kreiraj token za tog korisnika
         AppUser user = (AppUser) authentication.getPrincipal();
         String jwt = tokenUtils.generateToken(user.email);
         int expiresIn = tokenUtils.getExpiredIn();
@@ -90,7 +83,6 @@ public class RegistrationController {
             return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password()));
         }
 
-        // Vrati token kao odgovor na uspesnu autentifikaciju
         return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password()));
     }
 	
