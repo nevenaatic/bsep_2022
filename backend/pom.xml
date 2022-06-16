@@ -66,6 +66,9 @@
 			<version>1.68</version>
 		</dependency>
 		
+		
+		
+		
 		<dependency>
     <groupId>org.bouncycastle</groupId>
     <artifactId>bcpkix-jdk15on</artifactId>
@@ -107,7 +110,17 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			
+			
+			<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>sonar-maven-plugin</artifactId>
+    <version>3.0.2</version>
+</plugin>
 		</plugins>
+		
+		
+		
 	</build>
 
 </project>
