@@ -78,6 +78,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/certificate/revoke/**").hasAuthority("PERM_CERT_REVOKE")
                 .antMatchers("/certificate/checkValidity/**").hasAuthority("PERM CERT_CHECK_VALIDITY")
                 .antMatchers("/certificate/downloadCertificate").hasAuthority("PERM_CERT_DOWNLOAD")
+                 
                 
                 .anyRequest().authenticated().and()
                 .cors().and()
