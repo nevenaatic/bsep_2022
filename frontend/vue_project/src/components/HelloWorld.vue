@@ -1,73 +1,132 @@
 <template>
-  <div class="picture" >
-   
-   <div class="login"> 
+<div class="container-fluid">    
+	<form id="registrationForm" @submit.prevent = "signIn">
+		<div class="container-fluid" style="margin-left:23%; margin-top:10%">
+			<div class="col-lg-12 login-key">
+				<i class="bi bi-file-person" aria-hidden="true"></i>
+			</div>
+      <h1 style="margin-right:40%; margin-top:10%" class="text-center">SIGN IN</h1><br>
+			<label class="col-sm-4 col-form-label" for="email"><b>Email</b></label>
+			<input placeholder="E-mail" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" class="col-sm-4  col-form-control" type="email" v-model="user.email" required>
+			<br>
 
-     <div > <h1> Sign in </h1> </div> 
-     <form>
-       <div class="form-group">
-         <div> 
-       <label for="name">Username</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Enter username"
-               
-                />
-         </div>
+			<label class="col-sm-4 col-form-label" for="password"><b>Password</b></label>
+			<input placeholder="Password" id="password" 
+      pattern="(?=.*\d)(?=.*[a-z])(?=.*[!@#$%^(*)~])(?=.*[A-Z]).{8,}" 
+      title="Must contain at least one number, one special symbol and one uppercase and lowercase letter, and at least 8 or more characters" 
+      class="col-sm-4 col-form-control" type="password" 
+      v-model="user.password" required>
+			<br>
 
-         <div style="margin-top: 0.5rem"> 
-                 <label for="password">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  placeholder="Enter password"
-               
-                />
-       </div>
-      <button type="button" class="btn btn-primary" v-on:click="signIn()"> <router-link to="/admin"> Sign in</router-link ></button>
-        </div>
-     </form>
-    </div> 
-  </div>
-  
+			<br><br>
+			<div class="row">
+				<div class="col-sm-3">
+				</div>
+				<div class="col-sm-2">
+					<button id="submit" class="button btn-lg btn-secondary" type="submit">Sign in</button>
+				</div>
+        <div class="col-sm-7">
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
 </template>
 
 <script>
+
+import axios from 'axios'
+import Swal from 'sweetalert2'
+
 export default {
   name: 'HelloWorld',
+  data() {
+	return {
+		user: {email:"", password:"" }, 
+		};
+  },
  methods: {
 
-    singIn: function(){
-     this.$router.push({name: 'AdminProfile'})
-   }
+    signIn: function(){
+			if (this.check()){
+				axios
+				.post('https://localhost:8090/registration/login', this.user)
+				.then(response=>{
+          console.log(response.data)
+					if(response.data != null){
+              if(response.data.twoFA == false){
+                this.setLocalStorage(response.data)
+                //this.$router.push('/certificateadmin')
+                     location.reload()
+
+              } else {
+                const id = response.data.id
+                console.log(id)
+                localStorage.setItem('AT', response.data.accessToken)
+                localStorage.setItem('EI', response.data.expiresIn)
+                localStorage.setItem('R', response.data.role)
+                localStorage.setItem('FA', response.data.twoFA)
+                localStorage.setItem('ID', response.data.id)
+                axios
+                  .post('http://localhost:8085/register/' + id)
+                .then(response=>{
+                  console.log(response.data)
+                  if (response.data.qrCode != null){
+                      localStorage.setItem('qrCode', response.data.qrCode)
+                      this.$router.push('/showQR')
+                  } else if (response.data.alreadyRegistered != null){
+                      this.$router.push('/confirmCode')
+                  }
+                  
+                })
+              }
+          }
+          else {
+            Swal.fire('Error', 'Your credentials are wrong. Please, try again.', 'error')
+          }
+				})
+				.catch(function (error) {
+          console.log(error)
+						if (error.response.status == 400)
+              Swal.fire('Error', 'Your credentials are wrong. Please, try again.', 'error')
+            else
+              Swal.fire('Error', 'Something went wrong. Please, try again later.', 'error')
+					}
+				)
+			}
+		},
+
+    setLocalStorage(response) {
+      localStorage.setItem('accessToken', response.accessToken)
+      localStorage.setItem('expiresIn', response.expiresIn)
+      localStorage.setItem('role', response.role)
+      localStorage.setItem('twoFA', response.twoFA)
+      localStorage.setItem('id', response.id)
+    },
+
+    check(){
+			if (this.user.email == "" || this.user.password == "") {
+        Swal.fire('Error', 'Please, fill both e-mail and password information', 'error')
+        return false
+      }
+      return true;
+		}
+
+
  }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.picture{
-   background:url("../assets/security.png");
-    min-height : 50rem;
-  min-width : 100%;
-  background-size:100% 100%;
-  background-repeat:no-repeat;
-  overflow-y: hidden;
-  overflow-x: hidden;
-}
+
 .login{
   margin-top: 20rem ;
   margin-left: 40%;
   background-color: rgba(1,1,1,0.5);;
   height: 20rem;
   width: 25rem
-}
-label{
-  margin-left:1rem;
-
-  color: white;
-  font-size: large;
 }
 input{
   margin-left: 1rem;
@@ -77,10 +136,6 @@ input{
 
   margin-left: 40%;
   margin-top: 2rem;
-}
-h1{
-  margin-left: 8rem;
-  color: white
 }
 h3 {
   margin: 40px 0 0;
@@ -95,5 +150,5 @@ li {
 }
 a {
   color: #42b983;
-}
+} 
 </style>

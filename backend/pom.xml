@@ -29,6 +29,10 @@
 		<artifactId>spring-boot-starter-test</artifactId>
 		<scope>test</scope>
 	</dependency>
+	<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
 
 		<!--za jpa-->
 		<dependency>
@@ -51,7 +55,12 @@
 
 		</dependency>
 
-
+<!--multiple logs-->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
@@ -69,6 +78,19 @@
 			<version>2.6.0</version>
 		</dependency>
 		<!-- Thanks for using https://jar-download.com -->
+		
+		<!-- ukljucena podrska za Spring Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- ukljucena podrska za rad sa JWT -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.6.0</version>
+		</dependency>
 
 	</dependencies>
 
