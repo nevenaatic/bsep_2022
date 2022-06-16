@@ -59,14 +59,14 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
 		</dependency>
-<!--multiple logs-->
+<!--multiple 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-ext-debug-jdk14</artifactId>
 			<version>1.68</version>
 		</dependency>
 		
-		
+		logs-->
 		
 		
 		<dependency>
