@@ -10,11 +10,16 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 
+import org.apache.log4j.Logger;
+
 
 @SpringBootApplication
 public class DemoApplication {
 	
+	final static Logger logger = Logger.getLogger(DemoApplication.class);
+	
 	public static void main(String[] args) {
+		logger.debug("CAO PROBA");
 		SpringApplication.run(DemoApplication.class, args);
 		
 	}
