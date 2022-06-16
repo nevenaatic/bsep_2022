@@ -97,7 +97,7 @@ public class RegistrationService {
 //						permCertCheckValidity.setRole(role);
 //						permissionRoleService.save(permCertCheckValidity);	
 					}
-				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role);
+				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role, user.twoFA);
 				appUserRepository.save(appUser);	
 				loggerInfo.info("New user is register with user id "+ appUser.id);
 				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
