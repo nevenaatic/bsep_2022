@@ -26,6 +26,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
 
@@ -289,7 +291,8 @@ public class CertificateService {
         os.write(Base64.getEncoder().encode(certificate.getEncoded()));
         os.write("\n-----END CERTIFICATE-----\n".getBytes(StandardCharsets.US_ASCII));
         os.close();
-        loggerInfo.info("Extracting certificate " + serialNumber);
+        AppUser user= this.loggedUser();
+        loggerInfo.info("Extracting certificate " + serialNumber + " by user id " + user.id);
         
        // if(!certificateDto.getAuthoritySubject().equals("ca"))
             return true;
@@ -361,5 +364,10 @@ public class CertificateService {
 			}
 		}
 		return frontData;
+	}
+	
+	public AppUser loggedUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return  (AppUser)authentication.getPrincipal();
 	}
 }

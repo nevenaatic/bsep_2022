@@ -20,6 +20,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,6 +62,9 @@ public class CertificateController {
 	@PostMapping(path = "/createCertificate")
 	public ResponseEntity<Boolean> createCertificate(@RequestBody NewCertificateDto certificateDTO) throws CertIOException
 	{
+		
+        AppUser loggedUser = this.loggedUser();
+		
 		System.out.println(certificateDTO.toString());
 		AppUser issuer = appUserService.findById(certificateDTO.issuerId);
 		IssuerInfoDTO issuerDTO = new IssuerInfoDTO(issuer.name, issuer.surname,"", "", "RS", issuer.email, String.valueOf(issuer.id));
@@ -79,7 +84,9 @@ public class CertificateController {
 	@PostMapping(path = "/revokeCertificate/{serialNumber}")
 	public  ResponseEntity<Boolean> revokeCertificate(@PathVariable("serialNumber") String serialNumber)
 	{
-		loggerInfo.info("Certificate with serial number " + serialNumber + " is revoked ");
+		
+        AppUser loggedUser = this.loggedUser();
+		loggerInfo.info("Certificate with serial number " + serialNumber + " is revoked by user " + loggedUser.id);
 		return new ResponseEntity<Boolean>(certificateService.revokeCertificate(serialNumber), HttpStatus.OK);
 	}
 	
@@ -112,9 +119,12 @@ public class CertificateController {
 	@GetMapping(path = "/revoke/{certificateSerial}")
 	public ResponseEntity<List<String>> revoke(@RequestBody String serial)
 	{
+		 AppUser loggedUser = this.loggedUser();
+		
 		certificateService.revokeCertificate(serial);
 		List <String> lista = new ArrayList<String>();
-		lista.add("BEJB");
+		lista.add("BEJB");	 //???
+		loggerInfo.info("Certificate with serial number " + serial + " is revoked by user " + loggedUser.id);
 		return new ResponseEntity<List<String>>(lista, HttpStatus.OK);
 	}
 	
@@ -127,16 +137,23 @@ public class CertificateController {
 	@PostMapping("/downloadCertificate")
     public ResponseEntity<Resource> downloadCertificate(@RequestBody String serialNumber)
             throws CertificateException, IOException {
+		
+		AppUser loggedUser = this.loggedUser();
 		String serial = serialNumber.split("=")[0];
         certificateService.extractCertificate(serial);
         File file = new File(serial + ".crt");
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
         file.deleteOnExit();
-        loggerInfo.info("Download certificate ");
+        loggerInfo.info("Download certificate " + serialNumber + " by user id " + loggedUser.id);
+     
         return ResponseEntity.ok()
                 .contentLength(file.length())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
 	
+	public AppUser loggedUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return  (AppUser)authentication.getPrincipal();
+	}
 }

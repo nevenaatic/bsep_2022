@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,10 @@ public class RegistrationController {
 	@Autowired
 	private TokenUtils tokenUtils;
 	
+	final static Logger loggerErr = Logger.getLogger("errorLogger"); 
+	final static Logger loggerInfo = Logger.getLogger("infoLogger");
+	final static Logger loggerWarn = Logger.getLogger("warnLogger");
+	
 	public RegistrationController() {
 	}
 	
@@ -70,6 +75,7 @@ public class RegistrationController {
                     authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         }
         catch (Exception ex){
+        	loggerErr.error("failed login");
         	System.out.println(ex);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -82,7 +88,9 @@ public class RegistrationController {
         if (user.isEnabled() == false){
             return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password()));
         }
-
+        loggerInfo.info("User id " + user.id +" is logged in");
+        
+        // Vrati token kao odgovor na uspesnu autentifikaciju
         return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password()));
     }
 	
@@ -93,5 +101,7 @@ public class RegistrationController {
 		return registrationService.loginUser(email, password);
 	}
 */
+	
+	
 }
 

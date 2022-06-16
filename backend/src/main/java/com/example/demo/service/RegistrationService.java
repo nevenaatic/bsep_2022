@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,9 @@ public class RegistrationService {
 	private PermissionRoleService permissionRoleService; 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	final static Logger loggerErr = Logger.getLogger("errorLogger"); 
+	final static Logger loggerInfo = Logger.getLogger("infoLogger");
+	final static Logger loggerWarn = Logger.getLogger("warnLogger");
 	
 	public RegistrationService() {}
 	
@@ -94,18 +98,19 @@ public class RegistrationService {
 //						permissionRoleService.save(permCertCheckValidity);	
 					}
 				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role);
-				
 				appUserRepository.save(appUser);	
-				
+				loggerInfo.info("New user is register with user id "+ appUser.id);
 				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 			} 
 			catch (Exception e) 
 			{
+				loggerErr.error("failed - can't register user. ");
 				System.out.println(e);
 				return new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 		System.out.println("Korisnik sa ovim mailom postoji ili je nepostojeci mail.");
+		loggerErr.error("failed - email is taken or invalid. ");
 		return new ResponseEntity<Boolean>(false, HttpStatus.CONFLICT);
 	}
 	
@@ -126,13 +131,16 @@ public class RegistrationService {
 				user.verificationCode = verification.verificationCode;
 				appUserRepository.save(user);
 				userVerificationsRepository.delete(verification);
+				loggerInfo.info("User "+ user.id + " verify his account.");
 				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 		}
 		if(verification != null) {
 			userVerificationsRepository.delete(verification);
 		}
+		loggerErr.error("failed - Something went wrong, can't verify user. ");
 		return new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+	
+		}
 	
 	public void sendEmail(String to, String body, String topic)
 	{
@@ -143,6 +151,7 @@ public class RegistrationService {
 		msg.setText(body);
 		javaMailSender.send(msg);
 		System.out.println("Email sent...");
+	
 	}
 	
 	public boolean isNumber(String st) {
