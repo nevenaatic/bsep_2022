@@ -16,12 +16,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.IssuerInfoDTO;
@@ -44,6 +47,10 @@ public class CertificateExample {
 	private CertificateRepository certificateRepository; 
 	@Autowired
 	private AppUserRepository appUserRepository;
+	
+	final static Logger loggerErr = Logger.getLogger("errorLogger");
+	final static Logger loggerInfo = Logger.getLogger("infoLogger");
+	final static Logger loggerWarn = Logger.getLogger("warnLogger");
 	
 	public CertificateExample() {
 		Security.addProvider(new BouncyCastleProvider());
@@ -77,11 +84,14 @@ public class CertificateExample {
 			cert.verify(keyPairIssuer.getPublic());
 			System.out.println("\nValidacija uspesna :)");
 			
+			loggerWarn.warn("New certificate is created by user id  " + issuerId);
+			loggerInfo.info("New certificate is created by user id  " + issuerId);
 			certificateRepository.save(certData);
 			AppUser subj = appUserRepository.findById(Long.parseLong(subject.userId)).get();
 			if (isCA)
 				subj.role.getName().equals("certification_authority"); 
 			appUserRepository.save(subj);
+			loggerInfo.info("New CA is created by user id  " + issuerId);
 			
 	            KeyStoreWriter privateKeys = new KeyStoreWriter();
 	            privateKeys.loadKeyStore("keys.jks", "keys".toCharArray());
@@ -107,18 +117,23 @@ public class CertificateExample {
 			//System.out.println(ksr.readCertificate("RootKeyStore.jks", pass, "qbcdefgh"));
 			//Ovde se desava exception, jer se validacija vrsi putem drugog kljuca
 		} catch(CertificateException e) {
+			loggerErr.error("failed while saving certificate by user id " + this.loggedUser().id +" - certificate error ");
 			e.printStackTrace();
 			return false;
 		} catch (InvalidKeyException e) {
+			loggerErr.error("failed while saving certificate by user id " + this.loggedUser().id + " - invalid key error ");
 			e.printStackTrace();
 			return false;
 		} catch (NoSuchAlgorithmException e) {
+			loggerErr.error("failed while saving certificate by user id " + this.loggedUser().id +" - algotithm error ");
 			e.printStackTrace();
 			return false;
 		} catch (NoSuchProviderException e) {
+			loggerErr.error("failed while saving certificate by user id "  + this.loggedUser().id);
 			e.printStackTrace();
 			return false;
 		} catch (SignatureException e) {
+			loggerErr.error("failed while saving certificate by user id "  + this.loggedUser().id +" - validation exception  ");
 			System.out.println("\nValidacija neuspesna :(");
 			e.printStackTrace();
 			return false; 
@@ -147,6 +162,7 @@ public class CertificateExample {
 		//Kreiraju se podaci za issuer-a, sto u ovom slucaju ukljucuje:
 	    // - privatni kljuc koji ce se koristiti da potpise sertifikat koji se izdaje
 	    // - podatke o vlasniku sertifikata koji izdaje nov sertifikat
+	    loggerInfo.info("Generate issuer data by user id " + this.loggedUser().id);
 		return new IssuerData(issuerKey, builder.build());
 	}
 
@@ -177,8 +193,10 @@ public class CertificateExample {
 		    // - podatke o vlasniku
 		    // - serijski broj sertifikata
 		    // - od kada do kada vazi sertifikat
+		    loggerInfo.info("Generate subject data by user id " + this.loggedUser().id);
 		    return new SubjectData(keyPairSubject.getPublic(), builder.build(), sn, startDate, endDate);
 		} catch (ParseException e) {
+			loggerErr.error("failed while generating subject data by user id " + this.loggedUser().id);
 			e.printStackTrace();
 		}
 		return null;
@@ -191,8 +209,10 @@ public class CertificateExample {
 			keyGen.initialize(2048, random);
 			return keyGen.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
+        	loggerErr.error("failed while generating key pair - algorithm exception, user id"  + this.loggedUser().id);
 			e.printStackTrace();
 		} catch (NoSuchProviderException e) {
+			loggerErr.error("failed while generating key pair by user id "  + this.loggedUser().id );
 			e.printStackTrace();
 		}
         return null;
@@ -250,5 +270,11 @@ public class CertificateExample {
   
         return sb.toString();
     }
+	
+	
+	public AppUser loggedUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return  (AppUser)authentication.getPrincipal();
+	}
 }
 

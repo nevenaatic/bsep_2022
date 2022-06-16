@@ -45,7 +45,7 @@ public class AppUserService {
     
     public List<UserFrontDto> getUsersDto() {
     	List <UserFrontDto> usersRet = new ArrayList<UserFrontDto>();
-    	for (AppUser au : appUserRepository.findAll()) {
+    	for (AppUser au : appUserRepository.findAll()) { 
     		usersRet.add(new UserFrontDto(au.id, au.name, au.surname, au.email, au.address, au.city, au.country));
     	}
     	return usersRet;
