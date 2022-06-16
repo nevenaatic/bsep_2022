@@ -1,4 +1,4 @@
-package config;
+package com.example.demo.config;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,24 +18,22 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import com.example.demo.service.CustomUserDetailsService;
 
-import security.RestAuthenticationEntryPoint;
-import security.TokenAuthenticationFilter;
-import utils.TokenUtils;
+import com.example.demo.security.RestAuthenticationEntryPoint;
+import com.example.demo.security.TokenAuthenticationFilter;
+import com.example.demo.utils.TokenUtils;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Servis koji se koristi za citanje podataka o korisnicima aplikacije
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
-    // Handler za vracanje 401 kada klijent sa neodogovarajucim korisnickim imenom i lozinkom pokusa da pristupi resursu
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
@@ -45,7 +43,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    // Definisemo nacin utvrdjivanja korisnika pri autentifikaciji
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth
@@ -53,22 +50,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder());
     }
 
-    // Injektujemo implementaciju iz TokenUtils klase kako bismo mogli da koristimo njene metode za rad sa JWT u TokenAuthenticationFilteru
     @Autowired
     private TokenUtils tokenUtils;
 
-
-    // Definisemo prava pristupa za zahteve ka odredjenim URL-ovima/rutama
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+    
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
-                .authorizeRequests().antMatchers("/**").permitAll()
-                .antMatchers("**").permitAll()
-                .antMatchers("/registration/**").permitAll()
-                .antMatchers("registration/**").permitAll()
+                .authorizeRequests().antMatchers("/registration/registerUser").permitAll()
+                .antMatchers("/registration/login").permitAll()
+                .antMatchers("/registration/emailVerification").permitAll()
                 .anyRequest().authenticated().and()
 
 
@@ -78,12 +72,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
     }
 
-    // Definisanje konfiguracije koja utice na generalnu bezbednost aplikacije
     @Override
     public void configure(WebSecurity web) throws Exception {
-
-        web.ignoring().antMatchers(HttpMethod.POST, "/**");
-        web.ignoring().antMatchers(HttpMethod.POST, "**");
         web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico", "/**/*.html",
                 "/**/*.css", "/**/*.js");
     }

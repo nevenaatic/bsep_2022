@@ -1,4 +1,4 @@
-package config;
+package com.example.demo.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -12,6 +12,6 @@ public class WebConfig implements WebMvcConfigurer {
     // Za svrhe razvoja konfigurisemo dozvolu za CORS kako ne bismo morali @CrossOrigin anotaciju da koristimo nad svakim kontrolerom
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:8090").allowedMethods("POST","GET", "PUT", "DELETE");
+        registry.addMapping("/**").allowedOrigins("http://localhost:8082").allowedMethods("POST","GET", "PUT", "DELETE");
     }
 }

@@ -1,4 +1,4 @@
-package utils;
+package com.example.demo.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -143,7 +143,7 @@ public class TokenUtils {
 
         // Token je validan kada:
         return (username != null // korisnicko ime nije null
-                && username.equals(userDetails.getUsername()) // korisnicko ime iz tokena se podudara sa korisnickom imenom koje pise u bazi
+                && username.equals(userDetails.getUsername())                                     
                 && !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate()));
     }
 

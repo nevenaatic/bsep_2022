@@ -1,8 +1,8 @@
-package security;
+package com.example.demo.security;
 
 
 import io.jsonwebtoken.ExpiredJwtException;
-import utils.TokenUtils;
+import com.example.demo.utils.TokenUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

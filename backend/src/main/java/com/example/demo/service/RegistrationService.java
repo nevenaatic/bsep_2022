@@ -32,14 +32,10 @@ public class RegistrationService {
 	private UserVerificationsRepository userVerificationsRepository;
 	@Autowired
 	private RoleService roleService; 
-
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
 	public RegistrationService() {}
-	
-	public RegistrationService(PasswordEncoder passwordEncoder) {
-		this.passwordEncoder = passwordEncoder;
-	}
 	
 	public ResponseEntity<Boolean> registerUser(NewUserDto user)
 	{	
@@ -65,7 +61,7 @@ public class RegistrationService {
 					}
 				};
 				t.start();	
-				Role role = new Role("end_entity");
+				Role role = new Role("ROLE_end_entity");
 		        roleService.save(role);
 				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role);
 				appUserRepository.save(appUser);		
@@ -73,6 +69,7 @@ public class RegistrationService {
 			} 
 			catch (Exception e) 
 			{
+				System.out.println(e);
 				return new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}

@@ -134,7 +134,7 @@ public class AppUser implements UserDetails  {
 		return verified;
 	}
 
-	public Timestamp getLastPasswordResetDate() {
+public Timestamp getLastPasswordResetDate() {
 		return lastPasswordResetDate;
 	}
 
@@ -149,6 +149,6 @@ public class AppUser implements UserDetails  {
 	public void setMust_change_password(boolean must_change_password) {
 		this.must_change_password = must_change_password;
 	}
-	
+
 	
 }
