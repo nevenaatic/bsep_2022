@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,10 @@ public class KeyStoreReader {
 	// - Privatni kljucevi
 	// - Tajni kljucevi, koji se koriste u simetricnima siframa
 	private KeyStore keyStore;
+	
+	final static Logger loggerErr = Logger.getLogger("errorLogger"); 
+	final static Logger loggerInfo = Logger.getLogger("infoLogger");
+	final static Logger loggerWarn = Logger.getLogger("warnLogger");
 	
 	public KeyStoreReader() {
 		try {
@@ -64,16 +69,22 @@ public class KeyStoreReader {
 			X500Name issuerName = new JcaX509CertificateHolder((X509Certificate) cert).getSubject();
 			return new IssuerData(privKey, issuerName);
 		} catch (KeyStoreException e) {
+			loggerErr.error("FRIFKS");
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
+			loggerErr.error("FRIFKS");
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
+			loggerErr.error("FRIFKS");
 			e.printStackTrace();
 		} catch (CertificateException e) {
+			loggerErr.error("FRIFKS");
 			e.printStackTrace();
 		} catch (UnrecoverableKeyException e) {
+			loggerErr.error("FRIFKS");
 			e.printStackTrace();
 		} catch (IOException e) {
+			loggerErr.error("FRIFKS");
 			e.printStackTrace();
 		}
 		return null;
@@ -95,16 +106,22 @@ public class KeyStoreReader {
 				return cert;
 			}
 		} catch (KeyStoreException e) {
+			loggerErr.error("FRCRT");
 			e.printStackTrace();
 		} catch (NoSuchProviderException e) {
+			loggerErr.error("FRCRT");
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
+			loggerErr.error("FRCRT");
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
+			loggerErr.error("FRCRT");
 			e.printStackTrace();
 		} catch (CertificateException e) {
+			loggerErr.error("FRCRT");
 			e.printStackTrace();
 		} catch (IOException e) {
+			loggerErr.error("FRCRT");
 			e.printStackTrace();
 		}
 		return null;
@@ -126,18 +143,25 @@ public class KeyStoreReader {
 				return pk;
 			}
 		} catch (KeyStoreException e) {
+			loggerErr.error("FRPKY");
 			e.printStackTrace();
 		} catch (NoSuchProviderException e) {
+			loggerErr.error("FRPKY");
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
+			loggerErr.error("FRPKY");
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
+			loggerErr.error("FRPKY");
 			e.printStackTrace();
 		} catch (CertificateException e) {
+			loggerErr.error("FRPKY");
 			e.printStackTrace();
 		} catch (IOException e) {
+			loggerErr.error("FRPKY");
 			e.printStackTrace();
 		} catch (UnrecoverableKeyException e) {
+			loggerErr.error("FRPKY");
 			e.printStackTrace();
 		}
 		return null;

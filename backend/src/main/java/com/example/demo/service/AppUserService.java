@@ -7,14 +7,21 @@ import com.example.demo.repository.AppUserRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AppUserService {
 
     private AppUserRepository appUserRepository;
+	final static Logger loggerErr = Logger.getLogger("errorLogger"); 
+	final static Logger loggerInfo = Logger.getLogger("infoLogger");
+	final static Logger loggerWarn = Logger.getLogger("warnLogger");
 
     public AppUserService(AppUserRepository appUserRepository){
+    	
         this.appUserRepository = appUserRepository;
 
     }
@@ -36,10 +43,12 @@ public class AppUserService {
     }
     
     public void save(AppUser user) {
+    	loggerWarn.warn(" SNUID | UI " + this.loggedUser().id);
     	appUserRepository.save(user);
     }
     
     public AppUser findByVerificationCode(String code) {
+    	loggerWarn.warn(" FUBVC | UI " + this.loggedUser().id);
     	return appUserRepository.findByVerificationCode(code);
     }
     
@@ -50,4 +59,9 @@ public class AppUserService {
     	}
     	return usersRet;
     }
+    
+	public AppUser loggedUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return  (AppUser)authentication.getPrincipal();
+	}
 }

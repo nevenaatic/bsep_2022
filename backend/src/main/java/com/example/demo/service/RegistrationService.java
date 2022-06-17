@@ -99,18 +99,18 @@ public class RegistrationService {
 					}
 				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role, user.twoFA);
 				appUserRepository.save(appUser);	
-				loggerInfo.info("New user is register with user id "+ appUser.id);
+				loggerInfo.info("NUR | UI  "+ appUser.id);
 				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 			} 
 			catch (Exception e) 
 			{
-				loggerErr.error("failed - can't register user. ");
+				loggerErr.error("FUR ");
 				System.out.println(e);
 				return new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 		System.out.println("Korisnik sa ovim mailom postoji ili je nepostojeci mail.");
-		loggerErr.error("failed - email is taken or invalid. ");
+		loggerErr.error("FETI ");
 		return new ResponseEntity<Boolean>(false, HttpStatus.CONFLICT);
 	}
 	
@@ -131,13 +131,13 @@ public class RegistrationService {
 				user.verificationCode = verification.verificationCode;
 				appUserRepository.save(user);
 				userVerificationsRepository.delete(verification);
-				loggerInfo.info("User "+ user.id + " verify his account.");
+				loggerInfo.info("UVACC | UI  "+ user.id );
 				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 		}
 		if(verification != null) {
 			userVerificationsRepository.delete(verification);
 		}
-		loggerErr.error("failed - Something went wrong, can't verify user. ");
+		loggerErr.error("FVU ");
 		return new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
 	
 		}
