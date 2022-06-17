@@ -12,6 +12,8 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
+import org.apache.log4j.Logger;
+
 public class KeyStoreWriter {
 	//KeyStore je Java klasa za citanje specijalizovanih datoteka koje se koriste za cuvanje kljuceva
 	//Tri tipa entiteta koji se obicno nalaze u ovakvim datotekama su:
@@ -19,7 +21,9 @@ public class KeyStoreWriter {
 	// - Privatni kljucevi
 	// - Tajni kljucevi, koji se koriste u simetricnima siframa
 	private KeyStore keyStore;
-	
+	final static Logger loggerErr = Logger.getLogger("errorLogger"); 
+	final static Logger loggerInfo = Logger.getLogger("infoLogger");
+	final static Logger loggerWarn = Logger.getLogger("warnLogger");
 	public KeyStoreWriter() {
 		try {
 			keyStore = KeyStore.getInstance("JKS", "SUN");
@@ -39,12 +43,16 @@ public class KeyStoreWriter {
 				keyStore.load(null, password);
 			}
 		} catch (NoSuchAlgorithmException e) {
+			loggerErr.error("FLKS");
 			e.printStackTrace();
 		} catch (CertificateException e) {
+			loggerErr.error("FLKS");
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
+			loggerErr.error("FLKS");
 			e.printStackTrace();
 		} catch (IOException e) {
+			loggerErr.error("FLKS");
 			e.printStackTrace();
 		}
 	}
@@ -53,14 +61,19 @@ public class KeyStoreWriter {
 		try {
 			keyStore.store(new FileOutputStream(fileName), password);
 		} catch (KeyStoreException e) {
+			loggerErr.error("FSKS");
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
+			loggerErr.error("FSKS");
 			e.printStackTrace();
 		} catch (CertificateException e) {
+			loggerErr.error("FSKS");
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
+			loggerErr.error("FSKS");
 			e.printStackTrace();
 		} catch (IOException e) {
+			loggerErr.error("FSKS");
 			e.printStackTrace();
 		}
 	}
@@ -69,6 +82,7 @@ public class KeyStoreWriter {
 		try {
 			keyStore.setKeyEntry(alias, privateKey, password, new Certificate[] {certificate});
 		} catch (KeyStoreException e) {
+			loggerErr.error("FWKS");
 			e.printStackTrace();
 		}
 	}

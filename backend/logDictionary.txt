@@ -1,0 +1,50 @@
+ERRORS:
+CNCCRT : can't create certificate
+FL : failed login
+FSCRT : failed while saving certificate
+CRTERR: certificate error 
+FGSD : failed while generating subject data
+FWGKP : filed while generating key pair 
+FCCRTV x : failed check cert validity
+FCCA : failed check ca
+FCEE : failed check EE
+FFUEM : failed to found user with email
+FRIFKS : failed reading issuer from key store
+FRCRT : filed while reading certificate
+FRPKY : filed while reading private key
+FLKS : field while loading keystore 
+FSKS : field while saving key store
+FWKS : filed while writing keystore 
+FUR : failed user registration
+FETI : email taken or invalid
+FVU : failed verify user 
+
+
+
+INFO:
+
+CCRT : created certificate 
+SI : subject id
+II : issuer id 
+CRTR x : certificate is revoked  (serial number of certificate)
+CCV x : checking certificate validity (serial number of certificate) 
+DWLCRT x: downloaded certificate (serial num)
+LI : logged in
+UI x: user id x
+NCAC : new CA is created 
+GID : generate issuer data 
+GSD : generate subject data
+SFUC : status for user is changed in database
+CRTIV x : certificate is valid  serialNum
+CRTINV x : certificate is not valid  serialNum
+EXCRT x: extracting certificate x
+FUEM : found user with email
+NUR : new user is registred
+UVACC : user verified his account
+
+
+WARN:
+SUID : saved user in database 
+FUBVC: find user from database from verification code
+CRTR SN x : certificate is revoked with serial Number x
+SFUC : status for user is changed in database

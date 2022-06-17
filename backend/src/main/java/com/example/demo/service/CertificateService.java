@@ -63,7 +63,7 @@ public class CertificateService {
 		for (CertificateData c : allCerts) {
 			if (c.id == certificate.id) {
 				c.revoked = true;
-				loggerWarn.warn("Certificate with serial number " + serialNumber + " is revoked!");
+				loggerWarn.warn("CRTR SN " + serialNumber );
 				break;
 			}
 		}
@@ -113,7 +113,8 @@ public class CertificateService {
     		} else {
     			au.role.setName("certification_authority");
     		}
-    		loggerInfo.info("Status for user " + au.id +" is changed.");
+    		loggerInfo.info("SFUC | UI  " + au.id);
+    		loggerWarn.warn("SFUC | UI " + au.id);
     	}
     	
     	appUserService.saveAll(users);
@@ -123,12 +124,12 @@ public class CertificateService {
     	CertificateData certificateFromDatabase = certificateRepository.getCertificateByCode(serialCode);
     	
     	if (certificateFromDatabase.revoked) {
-    		loggerInfo.info("Certificate  " + serialCode + " is valid");
+    		loggerInfo.info("CRTIV   " + serialCode );
     		return false;
     	}
     	
     	if (!certificateFromDatabase.validFrom.before(new Date()) || !certificateFromDatabase.validUntil.after(new Date())) {
-    		loggerInfo.info("Certificate  " + serialCode + " isn't valid");
+    		loggerInfo.info("CRTINV   " + serialCode );
     		return false;
     	}
     	try {
@@ -141,7 +142,7 @@ public class CertificateService {
 			issurerCertificateFromKeyStore.verify(issurerCertificateFromKeyStore.getPublicKey());
     	} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
 				| SignatureException e) {
-    		loggerErr.error(" failed - can't check validity.");
+    		loggerErr.error(" FCCRTV " + serialCode );
     		e.printStackTrace();
     		return false;
 		}
@@ -202,7 +203,7 @@ public class CertificateService {
 			certificateFromKeyStore.verify(issurerCertificateFromKeyStore.getPublicKey());
 		} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
 				| SignatureException e) {
-			loggerErr.error(" failed - can't check CA");
+			loggerErr.error(" FCCA  | UI " + loggedUser().id);
 			e.printStackTrace();
 		}
     	
@@ -232,7 +233,7 @@ public class CertificateService {
 			certificateFromKeyStore.verify(issurerCertificateFromKeyStore.getPublicKey());
 		} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
 				| SignatureException e) {
-			loggerErr.error(" failed - can't check EE");
+			loggerErr.error(" FCEE | UI " + loggedUser().id);
 			e.printStackTrace();
 		}
     	
@@ -292,7 +293,7 @@ public class CertificateService {
         os.write("\n-----END CERTIFICATE-----\n".getBytes(StandardCharsets.US_ASCII));
         os.close();
         AppUser user= this.loggedUser();
-        loggerInfo.info("Extracting certificate " + serialNumber + " by user id " + user.id);
+        loggerInfo.info("EXCRT  " + serialNumber + " | UI " + user.id);
         
        // if(!certificateDto.getAuthoritySubject().equals("ca"))
             return true;

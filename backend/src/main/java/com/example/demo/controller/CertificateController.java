@@ -63,7 +63,6 @@ public class CertificateController {
 	public ResponseEntity<Boolean> createCertificate(@RequestBody NewCertificateDto certificateDTO) throws CertIOException
 	{
 		
-        AppUser loggedUser = this.loggedUser();
 		
 		System.out.println(certificateDTO.toString());
 		AppUser issuer = appUserService.findById(certificateDTO.issuerId);
@@ -72,11 +71,11 @@ public class CertificateController {
 		SubjectInfoDTO subjectDTO = new SubjectInfoDTO(subject.name, subject.surname,"", "", "RS", subject.email, String.valueOf(subject.id));
 		if (certGen.saveCertificate(issuerDTO, subjectDTO, certificateDTO.validFrom.toString(), certificateDTO.validUntil.toString(), certificateDTO.isCA, certificateDTO.extensions))
 			{
-			loggerInfo.info("Created certificate for subject id " + subject.id + " by issuer id "+ issuer.id);
+			loggerInfo.info("CCRT | SI  " + subject.id + " | II  "+ issuer.id);
 			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 			}
 		else {
-		loggerErr.error("Can't create certificate issuer id " + issuer.id +" and subject id " + subject.id);
+		loggerErr.error("CNCCRT | II " + issuer.id +" | SI " + subject.id);
 		return  new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 	}
@@ -86,7 +85,7 @@ public class CertificateController {
 	{
 		
         AppUser loggedUser = this.loggedUser();
-		loggerInfo.info("Certificate with serial number " + serialNumber + " is revoked by user " + loggedUser.id);
+		loggerInfo.info("CRTR " + serialNumber + "| UI  " + loggedUser.id);
 		return new ResponseEntity<Boolean>(certificateService.revokeCertificate(serialNumber), HttpStatus.OK);
 	}
 	
@@ -124,13 +123,13 @@ public class CertificateController {
 		certificateService.revokeCertificate(serial);
 		List <String> lista = new ArrayList<String>();
 		lista.add("BEJB");	 //???
-		loggerInfo.info("Certificate with serial number " + serial + " is revoked by user " + loggedUser.id);
+		loggerInfo.info("CRTR | UI " + loggedUser.id);
 		return new ResponseEntity<List<String>>(lista, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/checkValidity/{serialCode}")
 	public ResponseEntity<Boolean> isCertificateValid(@PathVariable("serialCode") String serialCode) throws CertificateException, NoSuchAlgorithmException, Exception, GeneralSecurityException, Exception {
-		loggerInfo.info("Checking certificate " + serialCode + " validity... ");
+		loggerInfo.info("CCV  " + serialCode + " | UI  " + this.loggedUser().id);
 		return new ResponseEntity<Boolean> (certificateService.isCertificateValidTEST(serialCode), HttpStatus.OK);
 	}
 
@@ -144,7 +143,7 @@ public class CertificateController {
         File file = new File(serial + ".crt");
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
         file.deleteOnExit();
-        loggerInfo.info("Download certificate " + serialNumber + " by user id " + loggedUser.id);
+        loggerInfo.info("DWLCRT  " + serialNumber + " | UI  " + loggedUser.id);
      
         return ResponseEntity.ok()
                 .contentLength(file.length())

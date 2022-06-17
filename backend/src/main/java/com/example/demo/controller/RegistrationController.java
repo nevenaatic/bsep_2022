@@ -75,7 +75,7 @@ public class RegistrationController {
                     authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         }
         catch (Exception ex){
-        	loggerErr.error("failed login");
+        	loggerErr.error("FL");
         	System.out.println(ex);
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -88,7 +88,7 @@ public class RegistrationController {
         if (user.isEnabled() == false){
             return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password(), user.twoFa, user.id));
         }
-        loggerInfo.info("User id " + user.id +" is logged in");
+        loggerInfo.info("LI | UI  " + user.id);
         
         // Vrati token kao odgovor na uspesnu autentifikaciju
         return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password(), user.twoFa, user.id));
