@@ -143,24 +143,24 @@ public class CertificateExample {
 			//Ovde se desava exception, jer se validacija vrsi putem drugog kljuca
 		} catch(CertificateException e) {
 			loggerErr.error("FSCRT | UI  " + this.loggedUser().id +"  ");
-			e.printStackTrace();
+			
 			return false;
 		} catch (InvalidKeyException e) {
 			loggerErr.error("FSCRT | UI " + this.loggedUser().id + " ");
-			e.printStackTrace();
+			
 			return false;
 		} catch (NoSuchAlgorithmException e) {
 			loggerErr.error("FSCRT | UI " + this.loggedUser().id +" - algotithm error ");
-			e.printStackTrace();
+			
 			return false;
 		} catch (NoSuchProviderException e) {
 			loggerErr.error("FSCRT | UI "  + this.loggedUser().id);
-			e.printStackTrace();
+			
 			return false;
 		} catch (SignatureException e) {
 			loggerErr.error("FSCRT | UI "  + this.loggedUser().id +" - validation exception  ");
 			System.out.println("\nValidacija neuspesna :(");
-			e.printStackTrace();
+			
 			return false; 
 		}
 		
@@ -222,7 +222,7 @@ public class CertificateExample {
 		    return new SubjectData(keyPairSubject.getPublic(), builder.build(), sn, startDate, endDate);
 		} catch (ParseException e) {
 			loggerErr.error("FGSD | UI " + this.loggedUser().id);
-			e.printStackTrace();
+			
 		}
 		return null;
 	}
@@ -235,10 +235,10 @@ public class CertificateExample {
 			return keyGen.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
         	loggerErr.error("FWGKP | UI"  + this.loggedUser().id);
-			e.printStackTrace();
+			
 		} catch (NoSuchProviderException e) {
 			loggerErr.error("FWGKP | UI"  + this.loggedUser().id );
-			e.printStackTrace();
+			
 		}
         return null;
 	}

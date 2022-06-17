@@ -41,9 +41,9 @@ public class KeyStoreReader {
 		try {
 			keyStore = KeyStore.getInstance("JKS", "SUN");
 		} catch (KeyStoreException e) {
-			e.printStackTrace();
+			loggerErr.error("FLKS");
 		} catch (NoSuchProviderException e) {
-			e.printStackTrace();
+			loggerErr.error("FLKS");
 		}
 	}
 	/**
@@ -70,22 +70,22 @@ public class KeyStoreReader {
 			return new IssuerData(privKey, issuerName);
 		} catch (KeyStoreException e) {
 			loggerErr.error("FRIFKS");
-			e.printStackTrace();
+		
 		} catch (FileNotFoundException e) {
 			loggerErr.error("FRIFKS");
-			e.printStackTrace();
+			
 		} catch (NoSuchAlgorithmException e) {
 			loggerErr.error("FRIFKS");
-			e.printStackTrace();
+			
 		} catch (CertificateException e) {
 			loggerErr.error("FRIFKS");
-			e.printStackTrace();
+			
 		} catch (UnrecoverableKeyException e) {
 			loggerErr.error("FRIFKS");
-			e.printStackTrace();
+			
 		} catch (IOException e) {
 			loggerErr.error("FRIFKS");
-			e.printStackTrace();
+			
 		}
 		return null;
 	}
@@ -107,22 +107,22 @@ public class KeyStoreReader {
 			}
 		} catch (KeyStoreException e) {
 			loggerErr.error("FRCRT");
-			e.printStackTrace();
+			
 		} catch (NoSuchProviderException e) {
 			loggerErr.error("FRCRT");
-			e.printStackTrace();
+			
 		} catch (FileNotFoundException e) {
 			loggerErr.error("FRCRT");
-			e.printStackTrace();
+			
 		} catch (NoSuchAlgorithmException e) {
 			loggerErr.error("FRCRT");
-			e.printStackTrace();
+			
 		} catch (CertificateException e) {
 			loggerErr.error("FRCRT");
-			e.printStackTrace();
+			
 		} catch (IOException e) {
 			loggerErr.error("FRCRT");
-			e.printStackTrace();
+			
 		}
 		return null;
 	}
@@ -144,25 +144,25 @@ public class KeyStoreReader {
 			}
 		} catch (KeyStoreException e) {
 			loggerErr.error("FRPKY");
-			e.printStackTrace();
+			
 		} catch (NoSuchProviderException e) {
 			loggerErr.error("FRPKY");
-			e.printStackTrace();
+			
 		} catch (FileNotFoundException e) {
 			loggerErr.error("FRPKY");
-			e.printStackTrace();
+			
 		} catch (NoSuchAlgorithmException e) {
 			loggerErr.error("FRPKY");
-			e.printStackTrace();
+			
 		} catch (CertificateException e) {
 			loggerErr.error("FRPKY");
-			e.printStackTrace();
+			
 		} catch (IOException e) {
 			loggerErr.error("FRPKY");
-			e.printStackTrace();
+			
 		} catch (UnrecoverableKeyException e) {
 			loggerErr.error("FRPKY");
-			e.printStackTrace();
+			
 		}
 		return null;
 	}

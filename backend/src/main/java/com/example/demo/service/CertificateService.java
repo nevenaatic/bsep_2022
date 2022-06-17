@@ -65,6 +65,7 @@ public class CertificateService {
 				c.revoked = true;
 				loggerWarn.warn("CRTR SN " + serialNumber );
 				break;
+				
 			}
 		}
 		certificateRepository.saveAll(allCerts);
@@ -143,7 +144,7 @@ public class CertificateService {
     	} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
 				| SignatureException e) {
     		loggerErr.error(" FCCRTV " + serialCode );
-    		e.printStackTrace();
+    		
     		return false;
 		}
     	return true;
@@ -204,7 +205,7 @@ public class CertificateService {
 		} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
 				| SignatureException e) {
 			loggerErr.error(" FCCA  | UI " + loggedUser().id);
-			e.printStackTrace();
+			
 		}
     	
     	return true;
@@ -234,7 +235,7 @@ public class CertificateService {
 		} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
 				| SignatureException e) {
 			loggerErr.error(" FCEE | UI " + loggedUser().id);
-			e.printStackTrace();
+			
 		}
     	
     	return true;
@@ -266,7 +267,7 @@ public class CertificateService {
                 return (X509Certificate)certFactory.generateCertificate(inp);
             }
         } catch (KeyStoreException | NoSuchProviderException | NoSuchAlgorithmException | CertificateException | IOException e) {
-            e.printStackTrace();
+        	loggerErr.error("FLKS");
         }
         return null;
     }

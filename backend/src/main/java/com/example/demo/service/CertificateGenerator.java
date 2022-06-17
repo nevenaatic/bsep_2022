@@ -6,6 +6,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -26,6 +27,10 @@ import com.example.demo.model.SubjectData;
 
 
 public class CertificateGenerator {
+	
+	final static Logger loggerErr = Logger.getLogger("errorLogger");
+	final static Logger loggerInfo = Logger.getLogger("infoLogger");
+	final static Logger loggerWarn = Logger.getLogger("warnLogger");
 	
 	public CertificateGenerator() {}
 
@@ -74,15 +79,15 @@ public class CertificateGenerator {
 			//Konvertuje objekat u sertifikat
 			return certConverter.getCertificate(certHolder);
 		} catch (CertificateEncodingException e) {
-			e.printStackTrace();
+			loggerErr.error("CRTERR");
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			loggerErr.error("CRTERR");
 		} catch (IllegalStateException e) {
-			e.printStackTrace();
+			loggerErr.error("CRTERR");
 		} catch (OperatorCreationException e) {
-			e.printStackTrace();
+			loggerErr.error("CRTERR");
 		} catch (CertificateException e) {
-			e.printStackTrace();
+			loggerErr.error("CRTERR");
 		}
 		return null;
 	}

@@ -10,6 +10,8 @@ import java.security.cert.CertificateFactory;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 /**
  *
  *Cita sertifikat iz fajla
@@ -18,6 +20,10 @@ public class CertificateReader {
 
 	public static final String BASE64_ENC_CERT_FILE = "./data/jovan2.cer";
 	public static final String BIN_ENC_CERT_FILE = "./data/jovan1.cer";
+	
+	final static Logger loggerErr = Logger.getLogger("errorLogger");
+	final static Logger loggerInfo = Logger.getLogger("infoLogger");
+	final static Logger loggerWarn = Logger.getLogger("warnLogger");
 	
 	public void testIt() {
 		System.out.println("Cita sertifikat iz Base64 formata");
@@ -44,11 +50,11 @@ public class CertificateReader {
 			    System.out.println(cert.toString());
 			 }
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			loggerErr.error("FRCRT");
 		} catch (CertificateException e) {
-			e.printStackTrace();
+			loggerErr.error("FRCRT");
 		} catch (IOException e) {
-			e.printStackTrace();
+			loggerErr.error("FRCRT");
 		}
 	}
 	@SuppressWarnings("rawtypes")
@@ -64,9 +70,9 @@ public class CertificateReader {
 			    System.out.println(cert);
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			loggerErr.error("FRCRT");
 		} catch (CertificateException e) {
-			e.printStackTrace();
+			loggerErr.error("FRCRT");
 		}
 
 	}
