@@ -12,16 +12,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import com.example.demo.dto.JwtAuthenticationRequest;
 import com.example.demo.dto.NewUserDto;
+import com.example.demo.dto.UserTokenState;
 import com.example.demo.model.AppUser;
+import com.example.demo.model.PasswordlessInfo;
 import com.example.demo.model.PermissionRole;
 import com.example.demo.model.Role;
 import com.example.demo.model.UserVerifications;
 import com.example.demo.repository.AppUserRepository;
+import com.example.demo.repository.PasswordlessInfoRepository;
 import com.example.demo.repository.UserVerificationsRepository;
+import com.example.demo.utils.TokenUtils;
 
 @Service
 public class RegistrationService {
@@ -33,11 +42,15 @@ public class RegistrationService {
 	@Autowired
 	private UserVerificationsRepository userVerificationsRepository;
 	@Autowired
+	private PasswordlessInfoRepository passwordlessInfoRepository;
+	@Autowired
 	private RoleService roleService; 
 	@Autowired
 	private PermissionRoleService permissionRoleService; 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private TokenUtils tokenUtils;
 	final static Logger loggerErr = Logger.getLogger("errorLogger"); 
 	final static Logger loggerInfo = Logger.getLogger("infoLogger");
 	final static Logger loggerWarn = Logger.getLogger("warnLogger");
@@ -97,7 +110,7 @@ public class RegistrationService {
 //						permCertCheckValidity.setRole(role);
 //						permissionRoleService.save(permCertCheckValidity);	
 					}
-				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role);
+				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role, user.twoFA);
 				appUserRepository.save(appUser);	
 				loggerInfo.info("New user is register with user id "+ appUser.id);
 				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -141,6 +154,20 @@ public class RegistrationService {
 		return new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
 	
 		}
+    
+    public Boolean verifyPasswordless(String userCode)
+	{	
+    	String code = userCode.split("=")[0];
+    	System.out.println(code);
+		PasswordlessInfo verification = passwordlessInfoRepository.getByVerificationCode(code);
+		if(verification != null && verification.timeOfRequest.isBefore(verification.timeOfRequest.plusMinutes(10))) {
+			passwordlessInfoRepository.delete(verification);
+			return true;
+		}
+		loggerErr.error("failed - Something went wrong, can't verify user. ");
+		return false;
+	
+		}
 	
 	public void sendEmail(String to, String body, String topic)
 	{
@@ -172,5 +199,54 @@ public class RegistrationService {
 			verificationCode += String.valueOf(rand.nextInt(10));
 		}
 		return verificationCode;
+	}
+	
+	private void sendPasswordlessEmail(String code, String email) {
+		String body = "Hello,\nThank you for using on our website. Below is your passwordless login code and it will last for the NEXT 10 MINUTES.\n\n" 
+				  + "Your Code is: " + code + 
+				    "\n\n If you have any trouble, write to our support : isa.projekat.tester@gmail.com";
+
+		String title = "Verification Code";
+		try 
+		{
+			Thread t = new Thread() {
+				public void run()
+				{
+					sendEmail(email,body,title);		
+				}
+			};
+			t.start();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	 public UserTokenState createAuthenticationToken(String email) throws Exception {
+
+	        AppUser user = appUserRepository.getUserByEmail(email);
+	        String jwt = tokenUtils.generateToken(user.email);
+	        int expiresIn = tokenUtils.getExpiredIn();
+	        if (user.isEnabled() == false){
+	        	//loggerInfo.info("User id " + user.id +" is not logged in, because he is not verified yet");
+	            return null;
+	        }
+	        loggerInfo.info("User id " + user.id +" is logged in");
+	        
+	        // Vrati token kao odgovor na uspesnu autentifikaciju
+	        return new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password(), user.twoFa, user.id);
+	    }
+
+	public Boolean checkEmail(String email) {
+		String emailFormat = (email.split("%40")[0] + "@" + email.split("%40")[1]).split("=")[0];
+		System.out.println(emailFormat);
+		for (AppUser au : appUserRepository.findAll()) {
+			if (au.email.equalsIgnoreCase(emailFormat)) {
+				String verificationCode = generateVerificationCode();
+				passwordlessInfoRepository.save(new PasswordlessInfo(au.email, verificationCode, LocalDateTime.now()));
+				sendPasswordlessEmail(verificationCode, au.email);
+				return true;
+			}
+		}
+		return false;
 	}
 }

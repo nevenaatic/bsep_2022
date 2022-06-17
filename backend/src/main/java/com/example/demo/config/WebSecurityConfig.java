@@ -66,7 +66,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/registration/registerUser").permitAll()
                 .antMatchers("/registration/login").permitAll()
                 .antMatchers("/registration/emailVerification").permitAll()
-                
+                .antMatchers("/registration/passwordlessLogin").permitAll()
+                .antMatchers("/registration/checkEmail").permitAll()
+
                 .antMatchers("/appUser/getAllUsers").hasAuthority("PERM_GET_ALL_USERS")
          
                 .antMatchers("/certificate/createCertificate").hasAuthority("PERM_CERT_ISSUE")

@@ -28,8 +28,21 @@
         <div class="col-sm-7">
 				</div>
 			</div>
+      <br><br>
 		</div>
 	</form>
+  <div class="row">
+				<div class="col-sm-4">
+				</div>
+				<div class="col-sm-3">
+					<button  class="button btn-lg btn-danger" v-on:click="redirectToForgotPassword()">Forgot password ?</button>
+				</div>
+        <div class="col-sm-3">
+          <button style="margin-left:5%" id="submit" v-on:click="redirectToPasswordless()" class="button btn-lg btn-primary" type="submit">Passwordless login</button>
+				</div>
+        <div class="col-sm-2">
+				</div>
+			</div>
 </div>
 
 </template>
@@ -96,6 +109,14 @@ export default {
 				)
 			}
 		},
+
+    redirectToPasswordless() {
+      this.$router.push('/passwordless')
+    },
+
+    redirectToForgotPassword() {
+      this.$router.push('/forgotPassword')
+    },
 
     setLocalStorage(response) {
       localStorage.setItem('accessToken', response.accessToken)

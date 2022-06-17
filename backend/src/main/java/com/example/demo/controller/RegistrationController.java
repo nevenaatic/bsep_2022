@@ -21,6 +21,7 @@ import com.example.demo.model.AppUser;
 import com.example.demo.model.Role;
 import com.example.demo.dto.JwtAuthenticationRequest;
 import com.example.demo.dto.NewUserDto;
+import com.example.demo.dto.PasswordlessDto;
 import com.example.demo.service.RegistrationService;
 
 import com.example.demo.utils.TokenUtils;
@@ -56,6 +57,21 @@ public class RegistrationController {
     public ResponseEntity<Boolean> verify(@RequestBody String userCode)
 	{	
 		return registrationService.verify(userCode);
+	}
+	
+	@PostMapping(path = "/checkEmail")
+    public ResponseEntity<Boolean> checkEmail(@RequestBody String email)
+	{	
+		return new ResponseEntity<Boolean>(registrationService.checkEmail(email), HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/passwordlessLogin")
+    public ResponseEntity<UserTokenState> passwordlessLogin(@RequestBody PasswordlessDto passwordlessDto) throws Exception
+	{	
+		if (registrationService.verifyPasswordless(passwordlessDto.userCode)) {
+			return new ResponseEntity<UserTokenState>(registrationService.createAuthenticationToken(passwordlessDto.email),HttpStatus.OK);
+		}
+		return new ResponseEntity<UserTokenState>(HttpStatus.OK);
 	}
 	
 	@GetMapping("/test")

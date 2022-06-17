@@ -10,6 +10,8 @@ import IssueCertificate from "../components/admin/IssueCertificate";
 import MyIssuedCertificates from "../components/admin/MyIssuedCertificates";
 import ShowQR from "../components/register/ShowQR";
 import ConfirmCode from "../components/register/ConfirmCode";
+import PasswordLess from  "../components/register/Passwordless";
+import PasswordlessCode from "../components/register/PasswordlessCode";
 
 const routes =[
     {
@@ -69,6 +71,18 @@ const routes =[
         component:   ConfirmCode
 
     },
+    {
+        path: "/passwordless",
+        name: "PasswordLess",
+        component:   PasswordLess
+
+    },
+    {
+        path: "/passwordlessCode",
+        name: "PasswordlessCode",
+        component:   PasswordlessCode
+
+    },
     
 ];
 const router = createRouter({
@@ -79,7 +93,8 @@ const router = createRouter({
   router.beforeEach((to, from) => {
     console.log(to.path)
     console.log(from.path)
-    if (to.path != "/" && to.path != "/register" && to.path != "/emailVerification" && to.path != "/showQR" && to.path != "/confirmCode") {
+    if (to.path != "/" && to.path != "/register" && to.path != "/emailVerification" && to.path != "/showQR" && 
+        to.path != "/confirmCode" && to.path != "/passwordless" && to.path != "/passwordlessCode") {
         if (localStorage.getItem('id') != null &&
             localStorage.getItem('role') != null &&
             localStorage.getItem('expiresIn') != null &&
