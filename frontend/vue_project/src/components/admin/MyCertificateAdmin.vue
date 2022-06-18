@@ -61,7 +61,7 @@ export default {
         Authorization: "Bearer " + localStorage.getItem("accessToken"),
       };
     axios
-				.post('https://localhost:8090/certificate/checkValidity/' + serial, {headers})
+				.post('https://localhost:8090/certificate/checkValidity', serial, {headers})
 				.then(response => {
 					if(response.data)
 						Swal.fire('Provera uspešna','Sertifikat ' + serial  + ' je validan !','success')

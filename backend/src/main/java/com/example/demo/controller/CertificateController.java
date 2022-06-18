@@ -108,10 +108,11 @@ public class CertificateController {
 		return new ResponseEntity<List<CertificateFrontDto>>(certificateService.formatIssuedCertificatesFrontData(userId), HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/checkValidity/{serialCode}")
-	public ResponseEntity<Boolean> isCertificateValid(@PathVariable("serialCode") String serialCode) throws CertificateException, NoSuchAlgorithmException, Exception, GeneralSecurityException, Exception {
-		loggerInfo.info("CCV  " + serialCode + " | UI  " + this.loggedUser().id);
-		return new ResponseEntity<Boolean> (certificateService.isCertificateValidTEST(serialCode), HttpStatus.OK);
+	@PostMapping(value = "/checkValidity")
+	public ResponseEntity<Boolean> isCertificateValid(@RequestBody String serialCode) throws CertificateException, NoSuchAlgorithmException, Exception, GeneralSecurityException, Exception {
+		String formattedCode = serialCode.split("=")[0];
+		loggerInfo.info("CCV  " + formattedCode + " | UI  " + this.loggedUser().id);
+		return new ResponseEntity<Boolean> (certificateService.isCertificateValidTEST(formattedCode), HttpStatus.OK);
 	}
 
 	@PostMapping("/downloadCertificate")

@@ -79,7 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/certificate/getAllCertificates").permitAll()
                 .antMatchers("/certificate/createCertificate").hasAuthority("PERM_CERT_ISSUE")
                 .antMatchers("/certificate/revokeCertificate").hasAuthority("PERM_CERT_REVOKE")
-                .antMatchers("/certificate/checkValidity/**").hasAuthority("PERM_CERT_CHECK_VALIDITY")
+                .antMatchers("/certificate/checkValidity/**").permitAll()
                 .antMatchers("/certificate/downloadCertificate").hasAuthority("PERM_CERT_DOWNLOAD")
                  
                 
