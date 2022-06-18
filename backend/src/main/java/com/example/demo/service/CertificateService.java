@@ -127,15 +127,15 @@ public class CertificateService {
     	System.out.println(certificateFromDatabase.validFrom);
     	System.out.println(certificateFromDatabase.validUntil);
     	if (certificateFromDatabase.revoked) {
-    		loggerInfo.info("Certificate  " + serialCode + " is not valid");
+    		loggerInfo.info("CNV  " + serialCode + "");
     		return false;
     	}
     	
     	if (!((new Date().after(certificateFromDatabase.validFrom)) && new Date().before(certificateFromDatabase.validUntil))) {
-    		loggerInfo.info("Certificate  " + serialCode + " is not valid");
+    		loggerInfo.info("CNV  " + serialCode + " ");
     		return false;
     	}
-    	loggerInfo.info("Certificate  " + serialCode + " is valid");
+    	loggerInfo.info("CNV  " + serialCode + " ");
     	return true;
     }
     

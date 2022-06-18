@@ -141,7 +141,7 @@ public class RegistrationService {
 			passwordlessInfoRepository.delete(verification);
 			return true;
 		}
-		loggerErr.error("failed - Something went wrong, can't verify user. ");
+		loggerErr.error("FVU. ");
 		return false;
 	
 		}
@@ -153,7 +153,7 @@ public class RegistrationService {
 		if(verification != null && verification.timeOfRequest.isBefore(verification.timeOfRequest.plusMinutes(10))) {
 			return true;
 		}
-		loggerErr.error("failed - Something went wrong, can't verify user. ");
+		loggerErr.error("FVU ");
 		return false;
 	
 		}
@@ -239,7 +239,7 @@ public class RegistrationService {
 	        	//loggerInfo.info("User id " + user.id +" is not logged in, because he is not verified yet");
 	            return null;
 	        }
-	        loggerInfo.info("User id " + user.id +" is logged in");
+	        loggerInfo.info("LI | UI " + user.id );
 	        
 	        // Vrati token kao odgovor na uspesnu autentifikaciju
 	        return new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password(), user.twoFa, user.id);

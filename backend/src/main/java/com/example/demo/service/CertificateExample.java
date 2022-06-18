@@ -89,8 +89,8 @@ public class CertificateExample {
 			cert.verify(keyPairIssuer.getPublic());
 			System.out.println("\nValidacija uspesna :)");
 			
-			loggerWarn.warn("New certificate is created by user id  " + issuerId);
-			loggerInfo.info("New certificate is created by user id  " + issuerId);
+			loggerWarn.warn("NCC | UI  " + issuerId);
+			loggerInfo.info("NCC | UI  " + issuerId);
 			certificateRepository.save(certData);
 			AppUser subj = appUserRepository.findById(Long.parseLong(subject.userId)).get();
 			if (isCA) {

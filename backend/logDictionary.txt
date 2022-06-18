@@ -41,7 +41,8 @@ EXCRT x: extracting certificate x
 FUEM : found user with email
 NUR : new user is registred
 UVACC : user verified his account
-
+CNV x: certificate not valid
+NCC : new certificate created
 
 WARN:
 SUID : saved user in database 
