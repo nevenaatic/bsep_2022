@@ -4,9 +4,17 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav">
         <li class="nav-item">
+          
+          <a class="nav-link" v-if="activeUser.accessToken == null && 
+                                    activeUser.id == null" 
+                                    href="/register">
+                                    Register</a>
+        </li>
+        <li class="nav-item">
+          
           <a class="nav-link" v-if="activeUser.accessToken != null && 
                                     activeUser.id != null && 
-                                    activeUser.role == 'ROLE_admin'" 
+                                    activeUser.role == 'ROLE_ADMIN'" 
                                     href="/certificates">
                                     All certificates</a>
         </li>
@@ -21,7 +29,7 @@
           <a class="nav-link" v-if="activeUser.accessToken != null && 
                                     activeUser.id != null && 
                                     activeUser.role != null &&
-                                    (activeUser.role == 'ROLE_admin' || activeUser.role == 'ROLE_certification_authority')" 
+                                    (activeUser.role == 'ROLE_ADMIN' || activeUser.role == 'ROLE_CA')" 
                                     href="/issueCertificate">
                                     Issue new certificate</a>
         </li>
@@ -29,7 +37,7 @@
           <a class="nav-link" v-if="activeUser.accessToken != null && 
                                     activeUser.id != null && 
                                     activeUser.role != null  &&
-                                    (activeUser.role == 'ROLE_admin' || activeUser.role == 'ROLE_certification_authority')"
+                                    (activeUser.role == 'ROLE_ADMIN' || activeUser.role == 'ROLE_CA')"
                                     href="/myIssuedCertificates">
                                     My issued certificates</a>
         </li>

@@ -63,24 +63,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
                 .authorizeRequests()
                 
+                .antMatchers("/appUser/getAllUsers").permitAll()
+                
                 .antMatchers("/registration/registerUser").permitAll()
                 .antMatchers("/registration/login").permitAll()
                 .antMatchers("/registration/emailVerification").permitAll()
                 .antMatchers("/registration/passwordlessLogin").permitAll()
                 .antMatchers("/registration/checkEmail").permitAll()
+                .antMatchers("/registration/changePassword").permitAll()
+                .antMatchers("/registration/checkEmailPassChange").permitAll()
 
-                .antMatchers("/appUser/getAllUsers").hasAuthority("PERM_GET_ALL_USERS")
-         
+                .antMatchers("/certificate/getAllCertificates").permitAll()
+                .antMatchers("/certificate/getCertificatesById/**").permitAll()
+                .antMatchers("/certificate/getIssuedCertificatesById/**").permitAll()
+                .antMatchers("/certificate/getAllCertificates").permitAll()
                 .antMatchers("/certificate/createCertificate").hasAuthority("PERM_CERT_ISSUE")
-                .antMatchers("/certificate/checkCertificateValidity").hasAuthority("PERM CERT_CHECK_VALIDITY")
                 .antMatchers("/certificate/revokeCertificate").hasAuthority("PERM_CERT_REVOKE")
-                ///certificate/getAllCertificates
-                ///getCertificatesById/{userId}
-                ///getIssuedCertificatesById/{userId}
-                .antMatchers("/certificate/revoke/**").hasAuthority("PERM_CERT_REVOKE")
-                .antMatchers("/certificate/checkValidity/**").hasAuthority("PERM CERT_CHECK_VALIDITY")
+                .antMatchers("/certificate/checkValidity/**").hasAuthority("PERM_CERT_CHECK_VALIDITY")
                 .antMatchers("/certificate/downloadCertificate").hasAuthority("PERM_CERT_DOWNLOAD")
-                
                 .anyRequest().authenticated().and()
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, customUserDetailsService), BasicAuthenticationFilter.class);

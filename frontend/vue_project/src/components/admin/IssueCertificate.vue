@@ -125,8 +125,11 @@ export default {
     await this.formatKeyUsages()
     console.log(this.certificateDTO.extensions)
     if (this.checkValidity() === true){
+      const headers = {
+        Authorization: "Bearer " + localStorage.getItem("accessToken"),
+      };
       axios
-          .post('https://localhost:8090/certificate/createCertificate', this.certificateDTO)
+          .post('https://localhost:8090/certificate/createCertificate', this.certificateDTO, { headers })
           .then(response=>{
             if(response.data === true)
             {

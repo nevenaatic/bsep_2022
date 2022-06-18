@@ -19,15 +19,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.example.demo.dto.ChangePasswordDto;
 import com.example.demo.dto.JwtAuthenticationRequest;
 import com.example.demo.dto.NewUserDto;
 import com.example.demo.dto.UserTokenState;
 import com.example.demo.model.AppUser;
+import com.example.demo.model.PasswordChange;
 import com.example.demo.model.PasswordlessInfo;
 import com.example.demo.model.PermissionRole;
 import com.example.demo.model.Role;
 import com.example.demo.model.UserVerifications;
 import com.example.demo.repository.AppUserRepository;
+import com.example.demo.repository.PasswordChangeRepository;
 import com.example.demo.repository.PasswordlessInfoRepository;
 import com.example.demo.repository.UserVerificationsRepository;
 import com.example.demo.utils.TokenUtils;
@@ -43,6 +46,8 @@ public class RegistrationService {
 	private UserVerificationsRepository userVerificationsRepository;
 	@Autowired
 	private PasswordlessInfoRepository passwordlessInfoRepository;
+	@Autowired
+	private PasswordChangeRepository passwordChangeRepository;
 	@Autowired
 	private RoleService roleService; 
 	@Autowired
@@ -81,26 +86,9 @@ public class RegistrationService {
 					}
 				};
 				t.start();	
-				//Role role = roleService.findByName("ROLE_END_ENTITY");
-				Role role = roleService.findByName("ROLE_CA");
-					if (role == null) {
-						role = new Role("ROLE_CA");
-						roleService.save(role);
-						PermissionRole permCertDownload = new PermissionRole("PERM_CERT_DOWNLOAD");
-						permCertDownload.setRole(role);
-						permissionRoleService.save(permCertDownload);
-						PermissionRole permCertCheckValidity = new PermissionRole("PERM_CERT_CHECK_VALIDITY");
-						permCertCheckValidity.setRole(role);
-						permissionRoleService.save(permCertCheckValidity);	
-						PermissionRole permCertCheckRevoke = new PermissionRole("PERM_CERT_REVOKE");
-						permCertCheckRevoke.setRole(role);
-						permissionRoleService.save(permCertCheckRevoke);
-						PermissionRole permGetNonAdmins = new PermissionRole("PERM_GET_NON_ADMINS");
-						permGetNonAdmins.setRole(role);
-						permissionRoleService.save(permGetNonAdmins);
-						PermissionRole permCertIssue = new PermissionRole("PERM_CERT_ISSUE ");
-						permCertIssue.setRole(role);
-						permissionRoleService.save(permCertIssue);
+				Role role = roleService.findByName("ROLE_END_ENTITY");
+//					if (role == null) {
+//						
 //						role = new Role("ROLE_END_ENTITY");
 //						roleService.save(role);
 //						PermissionRole permCertDownload = new PermissionRole("PERM_CERT_DOWNLOAD");
@@ -109,7 +97,7 @@ public class RegistrationService {
 //						PermissionRole permCertCheckValidity = new PermissionRole("PERM_CERT_CHECK_VALIDITY");
 //						permCertCheckValidity.setRole(role);
 //						permissionRoleService.save(permCertCheckValidity);	
-					}
+//					}
 				AppUser appUser = new AppUser(user.name, user.surname, user.email, passwordEncoder.encode(user.password), user.address, user.city, user.country,role, user.twoFA);
 				appUserRepository.save(appUser);	
 				loggerInfo.info("New user is register with user id "+ appUser.id);
@@ -168,6 +156,18 @@ public class RegistrationService {
 		return false;
 	
 		}
+    
+    public Boolean verifyPasswordChange(String userCode)
+	{	
+    	System.out.println(userCode);
+		PasswordChange verification = passwordChangeRepository.getByVerificationCode(userCode);
+		if(verification != null && verification.timeOfRequest.isBefore(verification.timeOfRequest.plusMinutes(10))) {
+			return true;
+		}
+		loggerErr.error("failed - Something went wrong, can't verify user. ");
+		return false;
+	
+		}
 	
 	public void sendEmail(String to, String body, String topic)
 	{
@@ -206,7 +206,27 @@ public class RegistrationService {
 				  + "Your Code is: " + code + 
 				    "\n\n If you have any trouble, write to our support : isa.projekat.tester@gmail.com";
 
-		String title = "Verification Code";
+		String title = "Passwordless Login Code";
+		try 
+		{
+			Thread t = new Thread() {
+				public void run()
+				{
+					sendEmail(email,body,title);		
+				}
+			};
+			t.start();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void sendPasswordChangeEmail(String code, String email) {
+		String body = "Hello,\nThank you for using on our website. Below is your passwordless login code and it will last for the NEXT 10 MINUTES.\n\n" 
+				  + "Your Code is: " + code + 
+				    "\n\n If you have any trouble, write to our support : isa.projekat.tester@gmail.com";
+
+		String title = "Password Change Code";
 		try 
 		{
 			Thread t = new Thread() {
@@ -244,6 +264,35 @@ public class RegistrationService {
 				String verificationCode = generateVerificationCode();
 				passwordlessInfoRepository.save(new PasswordlessInfo(au.email, verificationCode, LocalDateTime.now()));
 				sendPasswordlessEmail(verificationCode, au.email);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Boolean checkEmailPassChange(String email) {
+		String emailFormat = (email.split("%40")[0] + "@" + email.split("%40")[1]).split("=")[0];
+		System.out.println(emailFormat);
+		for (AppUser au : appUserRepository.findAll()) {
+			if (au.email.equalsIgnoreCase(emailFormat)) {
+				String verificationCode = generateVerificationCode();
+				passwordChangeRepository.save(new PasswordChange(au.email, verificationCode, LocalDateTime.now()));
+				sendPasswordChangeEmail(verificationCode, au.email);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Boolean changePassword(ChangePasswordDto changePass) {
+		for (PasswordChange pc : passwordChangeRepository.findAll()) {
+			if (pc.verificationCode.equals(changePass.code)) {
+				AppUser au = appUserRepository.findByEmail(pc.email);
+				System.out.println(changePass.password);
+				au.password = passwordEncoder.encode(au.password);
+				System.out.println(au.password);
+				appUserRepository.save(au);
+				passwordChangeRepository.delete(pc);
 				return true;
 			}
 		}

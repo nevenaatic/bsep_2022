@@ -12,6 +12,8 @@ import ShowQR from "../components/register/ShowQR";
 import ConfirmCode from "../components/register/ConfirmCode";
 import PasswordLess from  "../components/register/Passwordless";
 import PasswordlessCode from "../components/register/PasswordlessCode";
+import PasswordChangeForm from "../components/register/PasswordChangeForm";
+import PasswordChange from "../components/register/PasswordChange";
 
 const routes =[
     {
@@ -81,7 +83,16 @@ const routes =[
         path: "/passwordlessCode",
         name: "PasswordlessCode",
         component:   PasswordlessCode
-
+    },
+    {
+        path: "/passwordChange",
+        name: "PasswordChange",
+        component:   PasswordChange
+    },
+    {
+        path: "/passwordChangeForm",
+        name: "PasswordChangeForm",
+        component:   PasswordChangeForm
     },
     
 ];
@@ -94,7 +105,7 @@ const router = createRouter({
     console.log(to.path)
     console.log(from.path)
     if (to.path != "/" && to.path != "/register" && to.path != "/emailVerification" && to.path != "/showQR" && 
-        to.path != "/confirmCode" && to.path != "/passwordless" && to.path != "/passwordlessCode") {
+        to.path != "/confirmCode" && to.path != "/passwordless" && to.path != "/passwordlessCode" && to.path != "/passwordChange" && to.path != "/passwordChangeForm") {
         if (localStorage.getItem('id') != null &&
             localStorage.getItem('role') != null &&
             localStorage.getItem('expiresIn') != null &&

@@ -81,22 +81,15 @@ public class CertificateController {
 			}
 	}
 	
-	@PostMapping(path = "/revokeCertificate/{serialNumber}")
-	public  ResponseEntity<Boolean> revokeCertificate(@PathVariable("serialNumber") String serialNumber)
+	@PostMapping(path = "/revokeCertificate")
+	public  ResponseEntity<Boolean> revokeCertificate(@RequestBody String serialNumber)
 	{
 		
         AppUser loggedUser = this.loggedUser();
 		loggerInfo.info("Certificate with serial number " + serialNumber + " is revoked by user " + loggedUser.id);
-		return new ResponseEntity<Boolean>(certificateService.revokeCertificate(serialNumber), HttpStatus.OK);
+		return new ResponseEntity<Boolean>(certificateService.revokeCertificate(serialNumber.split("=")[0]), HttpStatus.OK);
 	}
-	
-	@PostMapping(path = "/checkCertificateValidity/{userId}")
-	public boolean checkCertificateValidity()
-	{
-		
-		return true;
-	}
-	
+
 	@GetMapping(path = "/getAllCertificates")
 	public ResponseEntity<List<CertificateFrontDto>> getAllCertificates()
 	{
@@ -114,18 +107,6 @@ public class CertificateController {
 	public ResponseEntity<List<CertificateFrontDto>> getIssuedCertificatesById(@PathVariable("userId") long userId)
 	{
 		return new ResponseEntity<List<CertificateFrontDto>>(certificateService.formatIssuedCertificatesFrontData(userId), HttpStatus.OK);
-	}
-	
-	@GetMapping(path = "/revoke/{certificateSerial}")
-	public ResponseEntity<List<String>> revoke(@RequestBody String serial)
-	{
-		 AppUser loggedUser = this.loggedUser();
-		
-		certificateService.revokeCertificate(serial);
-		List <String> lista = new ArrayList<String>();
-		lista.add("BEJB");	 //???
-		loggerInfo.info("Certificate with serial number " + serial + " is revoked by user " + loggedUser.id);
-		return new ResponseEntity<List<String>>(lista, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/checkValidity/{serialCode}")
@@ -154,6 +135,7 @@ public class CertificateController {
 	
 	public AppUser loggedUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(authentication);
         return  (AppUser)authentication.getPrincipal();
 	}
 }

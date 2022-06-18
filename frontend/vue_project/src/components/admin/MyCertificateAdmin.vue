@@ -13,14 +13,14 @@
       <li class="list-group-item">Subject Email: {{c.subjectEmail}}</li>
       <li class="list-group-item">Isser name: {{c.issuerFullName}}</li>
       <li class="list-group-item">Issuer Email: {{c.issuerEmail}}</li>
-      <li class="list-group-item">Valid: {{new Date(c.validFrom).toLocaleString()}} - {{new Date(c.validFrom).toLocaleString()}}</li>
+      <li class="list-group-item">Valid: {{new Date(c.validFrom).toLocaleString()}} - {{new Date(c.validUntil).toLocaleString()}}</li>
       <li v-if="c.revoked" style="color: red" class="list-group-item">Certificate is revoked !</li>
       <li v-if="!c.revoked" style="color: green" class="list-group-item">Certificate is not revoked !</li>
     </ul>
     <div class="card-body">
       <button v-if="!c.revoked" type="button" v-on:click="downloadCertificate(c.serialCode)" class="btn-sm btn-secondary">Download</button>
       <button v-if="!c.revoked" type="button" class="btn-sm btn-primary" v-on:click="checkValidity(c.serialCode)" style="margin-left: 2%">Check Validity</button>
-      <button v-if="!c.revoked && this.role != 'ROLE_end_entity'" type="button" style="margin-left: 2%" v-on:click="revoke(c.serialCode)" class="btn-sm btn-danger">Revoke</button>
+      <button v-if="!c.revoked && this.role != 'ROLE_END_ENTITY'" type="button" style="margin-left: 2%" v-on:click="revoke(c.serialCode)" class="btn-sm btn-danger">Revoke</button>
     </div>
 </div>
   </div>
@@ -57,8 +57,11 @@ export default {
     },
 
     checkValidity(serial) {
+      const headers = {
+        Authorization: "Bearer " + localStorage.getItem("accessToken"),
+      };
     axios
-				.post('https://localhost:8090/certificate/checkValidity/' + serial)
+				.post('https://localhost:8090/certificate/checkValidity/' + serial, {headers})
 				.then(response => {
 					if(response.data)
 						Swal.fire('Provera uspešna','Sertifikat ' + serial  + ' je validan !','success')
@@ -72,8 +75,11 @@ export default {
     },
 
     revoke(serial) {
+      const headers = {
+        Authorization: "Bearer " + localStorage.getItem("accessToken"),
+      };
     axios
-				.post('https://localhost:8090/certificate/revokeCertificate/' + serial)
+				.post('https://localhost:8090/certificate/revokeCertificate', serial, {headers})
 				.then(response => {
 					if(response.data)
 						Swal.fire('Certificate', 'Certificate ' + serial  + ' has been revoked successfully !','success')
@@ -86,9 +92,12 @@ export default {
     },
 
     async downloadCertificate(serial){
+      const headers = {
+        Authorization: "Bearer " + localStorage.getItem("accessToken"),
+      };
       console.log(serial)
       await axios
-            .post('https://localhost:8090/certificate/downloadCertificate', serial)
+            .post('https://localhost:8090/certificate/downloadCertificate', serial, {headers})
             .then(response => {
               if(response.data){
                 var a = document.createElement('a');

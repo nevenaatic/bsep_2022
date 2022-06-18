@@ -12,7 +12,7 @@
 
 			<label class="col-sm-4 col-form-label" for="password"><b>Password</b></label>
 			<input placeholder="Password" id="password" 
-      pattern="(?=.*\d)(?=.*[a-z])(?=.*[!@#$%^(*)~])(?=.*[A-Z]).{8,}" 
+      
       title="Must contain at least one number, one special symbol and one uppercase and lowercase letter, and at least 8 or more characters" 
       class="col-sm-4 col-form-control" type="password" 
       v-model="user.password" required>
@@ -72,6 +72,7 @@ export default {
                 this.setLocalStorage(response.data)
                 //this.$router.push('/certificateadmin')
                      location.reload()
+                     //<pattern="(?=.*\d)(?=.*[a-z])(?=.*[!@#$%^(*)~])(?=.*[A-Z]).{8,}" 
 
               } else {
                 const id = response.data.id
@@ -115,7 +116,7 @@ export default {
     },
 
     redirectToForgotPassword() {
-      this.$router.push('/forgotPassword')
+      this.$router.push('/passwordChange')
     },
 
     setLocalStorage(response) {

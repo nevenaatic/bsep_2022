@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.example.demo.dto.UserTokenState;
 import com.example.demo.model.AppUser;
 import com.example.demo.model.Role;
+import com.example.demo.dto.ChangePasswordDto;
 import com.example.demo.dto.JwtAuthenticationRequest;
 import com.example.demo.dto.NewUserDto;
 import com.example.demo.dto.PasswordlessDto;
@@ -65,6 +66,22 @@ public class RegistrationController {
 		return new ResponseEntity<Boolean>(registrationService.checkEmail(email), HttpStatus.OK);
 	}
 	
+	@PostMapping(path = "/checkEmailPassChange")
+    public ResponseEntity<Boolean> checkEmailPassChange(@RequestBody String email)
+	{	
+		return new ResponseEntity<Boolean>(registrationService.checkEmailPassChange(email), HttpStatus.OK);
+	}
+	
+	@PostMapping(path = "/changePassword")
+    public ResponseEntity<Boolean> checkEmailPassChange(@RequestBody ChangePasswordDto passwordChange)
+	{	
+		if (registrationService.verifyPasswordChange(passwordChange.code)) {
+			return new ResponseEntity<Boolean>(registrationService.changePassword(passwordChange), HttpStatus.OK);
+		}
+		else 
+			return new ResponseEntity<Boolean>(HttpStatus.OK);
+		}
+	
 	@PostMapping(path = "/passwordlessLogin")
     public ResponseEntity<UserTokenState> passwordlessLogin(@RequestBody PasswordlessDto passwordlessDto) throws Exception
 	{	
@@ -102,7 +119,7 @@ public class RegistrationController {
         String jwt = tokenUtils.generateToken(user.email);
         int expiresIn = tokenUtils.getExpiredIn();
         if (user.isEnabled() == false){
-            return ResponseEntity.ok(new UserTokenState(jwt, expiresIn,user.role.getName(), user.isEnabled(),user.isMust_change_password(), user.twoFa, user.id));
+            return ResponseEntity.ok(new UserTokenState(jwt, expiresIn, user.role.getName(), user.isEnabled(),user.isMust_change_password(), user.twoFa, user.id));
         }
         loggerInfo.info("User id " + user.id +" is logged in");
         

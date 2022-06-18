@@ -13,7 +13,7 @@
       <li class="list-group-item">Subject Email: {{c.subjectEmail}}</li>
       <li class="list-group-item">Isser name: {{c.issuerFullName}}</li>
       <li class="list-group-item">Issuer Email: {{c.issuerEmail}}</li>
-      <li class="list-group-item">Valid: {{new Date(c.validFrom).toLocaleString()}} - {{new Date(c.validFrom).toLocaleString()}}</li>
+      <li class="list-group-item">Valid: {{new Date(c.validFrom).toLocaleString()}} - {{new Date(c.validUntil).toLocaleString()}}</li>
       <li v-if="c.revoked" style="color: red" class="list-group-item">Certificate is revoked !</li>
       <li v-if="!c.revoked" style="color: green" class="list-group-item">Certificate is not revoked !</li>
     </ul>
@@ -56,8 +56,11 @@ export default {
     },
 
     checkValidity(serial) {
+      const headers = {
+        Authorization: "Bearer " + localStorage.getItem("accessToken"),
+      };
     axios
-				.post('https://localhost:8090/certificate/checkValidity/' + serial)
+				.post('https://localhost:8090/certificate/checkValidity/' + serial, {headers})
 				.then(response => {
 					if(response.data)
 						Swal.fire('Provera uspešna','Sertifikat ' + serial  + ' je validan !','success')
@@ -71,8 +74,11 @@ export default {
     },
 
     revoke(serial) {
+      const headers = {
+        Authorization: "Bearer " + localStorage.getItem("accessToken"),
+      };
     axios
-				.post('https://localhost:8090/certificate/revokeCertificate/' + serial)
+				.post('https://localhost:8090/certificate/revokeCertificate', serial, {headers})
 				.then(response => {
 					if(response.data){
 						Swal.fire('Certificate', 'Certificate ' + serial  + ' has been revoked successfully !','success')
@@ -87,8 +93,11 @@ export default {
 
     async downloadCertificate(serial){
       console.log(serial)
+      const headers = {
+        Authorization: "Bearer " + localStorage.getItem("accessToken"),
+      };
       await axios
-            .post('https://localhost:8090/certificate/downloadCertificate', serial)
+            .post('https://localhost:8090/certificate/downloadCertificate', serial, { headers})
             .then(response => {
               if(response.data){
                 var a = document.createElement('a');
@@ -106,8 +115,8 @@ export default {
   },
 
   async created() {
-    this.certificates = await this.fetchCertificates();
     this.userId = localStorage.getItem("id")
+    this.certificates = await this.fetchCertificates();
   },
 };
 
