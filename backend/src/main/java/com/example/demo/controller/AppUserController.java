@@ -23,13 +23,8 @@ public class AppUserController {
 	@GetMapping(path = "/getAllUsers")
 	public ResponseEntity<List<UserFrontDto>> getAllUsers()
 	{
-		System.out.println("HELLO");
 		return new ResponseEntity<List<UserFrontDto>>(appUserService.getUsersDto(), HttpStatus.OK);
 	}
-    
-    
-
-
 
 }
 

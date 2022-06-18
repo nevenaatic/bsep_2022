@@ -58,6 +58,7 @@ public class CertificateService {
 	}
 	
     public boolean revokeCertificate(String serialNumber) {
+    	System.out.println(serialNumber);
     	CertificateData certificate = certificateRepository.getCertificateByCode(serialNumber);
     	List <CertificateData> allCerts = certificateRepository.findAll();
 		for (CertificateData c : allCerts) {
@@ -104,15 +105,15 @@ public class CertificateService {
     	List<AppUser> users = appUserService.findAll();
     	for (AppUser au : users) {
     		boolean isCA = false;
-    		if (!au.role.getName().equals("admin")) {
+    		if (!au.role.getName().equals("ROLE_ADMIN")) {
     			for (CertificateData c : certificateRepository.getCertificatesBySubjectUserId(au.id))
     				if (!c.revoked && c.certificateType == CertificateType.CA)
     					isCA = true;
     		}
     		if (!isCA) {
-    			au.role.setName("end_user");
+    			au.role.setName("ROLE_END_ENTITY");
     		} else {
-    			au.role.setName("certification_authority");
+    			au.role.setName("ROLE_CA");
     		}
     		loggerInfo.info("SFUC | UI  " + au.id);
     		loggerWarn.warn("SFUC | UI " + au.id);
@@ -123,30 +124,18 @@ public class CertificateService {
     
     public boolean isCertificateValidTEST(String serialCode) throws Exception, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, GeneralSecurityException {
     	CertificateData certificateFromDatabase = certificateRepository.getCertificateByCode(serialCode);
-    	
+    	System.out.println(certificateFromDatabase.validFrom);
+    	System.out.println(certificateFromDatabase.validUntil);
     	if (certificateFromDatabase.revoked) {
-    		loggerInfo.info("CRTIV   " + serialCode );
+    		loggerInfo.info("Certificate  " + serialCode + " is not valid");
     		return false;
     	}
     	
-    	if (!certificateFromDatabase.validFrom.before(new Date()) || !certificateFromDatabase.validUntil.after(new Date())) {
-    		loggerInfo.info("CRTINV   " + serialCode );
+    	if (!((new Date().after(certificateFromDatabase.validFrom)) && new Date().before(certificateFromDatabase.validUntil))) {
+    		loggerInfo.info("Certificate  " + serialCode + " is not valid");
     		return false;
     	}
-    	try {
-	    	CertificateData issurerCertificateDatabase;
-	    	Certificate certificateFromKeyStore;
-	    	Certificate issurerCertificateFromKeyStore;
-	    	certificateFromKeyStore = this.keyStoreReader.readCertificate("EndEntityKeyStore.jks", "endentitykeystore", certificateFromDatabase.serialCode);
-			issurerCertificateDatabase = this.certificateRepository.findBySubjectKeyId(certificateFromDatabase.issuerKeyId);
-			issurerCertificateFromKeyStore = this.keyStoreReader.readCertificate("Keys.jks", "keys", certificateFromDatabase.serialCode);	
-			issurerCertificateFromKeyStore.verify(issurerCertificateFromKeyStore.getPublicKey());
-    	} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
-				| SignatureException e) {
-    		loggerErr.error(" FCCRTV " + serialCode );
-    		
-    		return false;
-		}
+    	loggerInfo.info("Certificate  " + serialCode + " is valid");
     	return true;
     }
     

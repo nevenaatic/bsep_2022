@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UserFrontDto;
 import com.example.demo.model.AppUser;
+import com.example.demo.model.Role;
 import com.example.demo.repository.AppUserRepository;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +21,8 @@ public class AppUserService {
 	final static Logger loggerErr = Logger.getLogger("errorLogger"); 
 	final static Logger loggerInfo = Logger.getLogger("infoLogger");
 	final static Logger loggerWarn = Logger.getLogger("warnLogger");
+    @Autowired
+    private RoleService roleService;
 
     public AppUserService(AppUserRepository appUserRepository){
     	

@@ -80,22 +80,15 @@ public class CertificateController {
 			}
 	}
 	
-	@PostMapping(path = "/revokeCertificate/{serialNumber}")
-	public  ResponseEntity<Boolean> revokeCertificate(@PathVariable("serialNumber") String serialNumber)
+	@PostMapping(path = "/revokeCertificate")
+	public  ResponseEntity<Boolean> revokeCertificate(@RequestBody String serialNumber)
 	{
 		
         AppUser loggedUser = this.loggedUser();
-		loggerInfo.info("CRTR " + serialNumber + "| UI  " + loggedUser.id);
-		return new ResponseEntity<Boolean>(certificateService.revokeCertificate(serialNumber), HttpStatus.OK);
+		loggerInfo.info("CRTR " + serialNumber.split("=")[0] + "| UI  " + loggedUser.id);
+		return new ResponseEntity<Boolean>(certificateService.revokeCertificate(serialNumber.split("=")[0]), HttpStatus.OK);
 	}
-	
-	@PostMapping(path = "/checkCertificateValidity/{userId}")
-	public boolean checkCertificateValidity()
-	{
-		
-		return true;
-	}
-	
+
 	@GetMapping(path = "/getAllCertificates")
 	public ResponseEntity<List<CertificateFrontDto>> getAllCertificates()
 	{
@@ -115,18 +108,6 @@ public class CertificateController {
 		return new ResponseEntity<List<CertificateFrontDto>>(certificateService.formatIssuedCertificatesFrontData(userId), HttpStatus.OK);
 	}
 	
-	@GetMapping(path = "/revoke/{certificateSerial}")
-	public ResponseEntity<List<String>> revoke(@RequestBody String serial)
-	{
-		 AppUser loggedUser = this.loggedUser();
-		
-		certificateService.revokeCertificate(serial);
-		List <String> lista = new ArrayList<String>();
-		lista.add("BEJB");	 //???
-		loggerInfo.info("CRTR | UI " + loggedUser.id);
-		return new ResponseEntity<List<String>>(lista, HttpStatus.OK);
-	}
-	
 	@PostMapping(value = "/checkValidity/{serialCode}")
 	public ResponseEntity<Boolean> isCertificateValid(@PathVariable("serialCode") String serialCode) throws CertificateException, NoSuchAlgorithmException, Exception, GeneralSecurityException, Exception {
 		loggerInfo.info("CCV  " + serialCode + " | UI  " + this.loggedUser().id);
@@ -139,11 +120,11 @@ public class CertificateController {
 		
 		AppUser loggedUser = this.loggedUser();
 		String serial = serialNumber.split("=")[0];
-        certificateService.extractCertificate(serial);
-        File file = new File(serial + ".crt");
+        certificateService.extractCertificate(serialNumber.split("=")[0]);
+        File file = new File(serialNumber.split("=")[0] + ".crt");
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
         file.deleteOnExit();
-        loggerInfo.info("DWLCRT  " + serialNumber + " | UI  " + loggedUser.id);
+        loggerInfo.info("DWLCRT  " + serialNumber.split("=")[0] + " | UI  " + loggedUser.id);
      
         return ResponseEntity.ok()
                 .contentLength(file.length())
@@ -153,6 +134,7 @@ public class CertificateController {
 	
 	public AppUser loggedUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(authentication);
         return  (AppUser)authentication.getPrincipal();
 	}
 }

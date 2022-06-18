@@ -12,7 +12,7 @@
 
 			<label class="col-sm-4 col-form-label" for="password"><b>Password</b></label>
 			<input placeholder="Password" id="password" 
-      pattern="(?=.*\d)(?=.*[a-z])(?=.*[!@#$%^(*)~])(?=.*[A-Z]).{8,}" 
+      
       title="Must contain at least one number, one special symbol and one uppercase and lowercase letter, and at least 8 or more characters" 
       class="col-sm-4 col-form-control" type="password" 
       v-model="user.password" required>
@@ -28,8 +28,21 @@
         <div class="col-sm-7">
 				</div>
 			</div>
+      <br><br>
 		</div>
 	</form>
+  <div class="row">
+				<div class="col-sm-4">
+				</div>
+				<div class="col-sm-3">
+					<button  class="button btn-lg btn-danger" v-on:click="redirectToForgotPassword()">Forgot password ?</button>
+				</div>
+        <div class="col-sm-3">
+          <button style="margin-left:5%" id="submit" v-on:click="redirectToPasswordless()" class="button btn-lg btn-primary" type="submit">Passwordless login</button>
+				</div>
+        <div class="col-sm-2">
+				</div>
+			</div>
 </div>
 
 </template>
@@ -59,6 +72,7 @@ export default {
                 this.setLocalStorage(response.data)
                 //this.$router.push('/certificateadmin')
                      location.reload()
+                     //<pattern="(?=.*\d)(?=.*[a-z])(?=.*[!@#$%^(*)~])(?=.*[A-Z]).{8,}" 
 
               } else {
                 const id = response.data.id
@@ -96,6 +110,14 @@ export default {
 				)
 			}
 		},
+
+    redirectToPasswordless() {
+      this.$router.push('/passwordless')
+    },
+
+    redirectToForgotPassword() {
+      this.$router.push('/passwordChange')
+    },
 
     setLocalStorage(response) {
       localStorage.setItem('accessToken', response.accessToken)
